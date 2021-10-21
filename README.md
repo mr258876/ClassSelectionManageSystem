@@ -1,60 +1,29 @@
-# SimpleStudentCourseManagementSystem
-Simple Student Course Management System, 简易学生选课管理系统
+# ClassSelectionManageSystem
+Class Selection Manage System, 选课管理系统
 
-During Production, 还在制作中
+Still in Progress, 正在开发中
 
 ## Version
-#### Python version: 3.7.9
-#### Django version: 3.2.8
-install method:
+#### Python   version: 3.9.0
+#### Django   version: 3.2.8
+#### Psycopg2 version: 2.9.1
+
+Install requirements:
 ```txt
-pip3 install Django==3.2.8 -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip3 install django==3.2.8
+pip3 install psycopg2==2.9.1
+```
+
+Setup:
+```txt
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 ## TODO
 - student opeartion
 - search course
 - form css
-
-
-
-python manage.py makemigrations
-python manage.py migrate
-
-## TIPS
-#### account
-Teahcer:
-任猎城
-u: 1280000001
-p: 12345678
-镇天稽
-u: 1110000001
-p: 22334455
-爱嘤诗贝伦
-u: 1160000001
-p: 12341234
-牛有力
-u: 2660000001
-p: password
-
-
-
-Student:
-李大爽
-u: 2020000001
-p: libigshuang
-
-张三
-u: 2018000001
-p: zhang333
-
-
-2044000001
-three12345
-
-2020000002
-xiaored
-
 
 
 ## Problems
