@@ -1,0 +1,26 @@
+{% extends "background.html" %}
+{% load static %}
+
+{% block title %}用户信息更新{% endblock %}
+
+{% block nav-button-l %}
+<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>{% endblock %}
+{% block nav-title %}用户信息更新{% endblock %}
+{% block nav-button-r %}{% endblock %}
+
+
+{% block content %}
+<div class="register-container">
+    <div class="register-title">修改个人信息</div>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {{form.as_p}}
+        <p><input type="submit" value="修改" class="submit-button" /></p>
+    </form>
+    <div class="mdui-row">
+        <div class="return-button mdui-col-xs-12"><a class="mdui-btn mdui-btn-block mdui-ripple"
+                href="{% url 'login' %}">返回上一页</a></div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <link href="{% static 'css/mdui.css' %}" rel="stylesheet">
+</head>
+
+<body
+    class="mdui-appbar-with-toolbar mdui-bottom-nav-fixed mdui-theme-primary-indigo mdui-theme-accent-pink mdui-theme-layout-auto mdui-loaded">
+    <header class="mdui-appbar mdui-appbar-fixed" id="appbar">
+        <div class="mdui-toolbar mdui-color-theme">
+            {% block nav-button-l %}{% endblock %}
+            <a href="javascript:;" class="mdui-typo-title">{% block nav-title %}{% endblock %}</a>
+            <div class="mdui-toolbar-spacer"></div>
+            {% block nav-button-r %}{% endblock %}
+        </div>
+        <div class="mdui-progress" id="progress-bar" hidden>
+            <div class="mdui-progress-indeterminate"></div>
+        </div>
+    </header>
+    
+    {% block content %}{% endblock %}
+
+    <script src="{% static 'js/mdui.min.js' %}"></script>
+</body>
+
+{% block script %}{% endblock %}
+
+</html>

@@ -1,0 +1,33 @@
+{% extends "background.html" %}
+{% load static %}
+
+{% block title %}
+选课系统登录
+{% endblock %}
+
+{% block nav-button-l %}
+<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
+{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
+{% block nav-button-r %}
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
+        class="mdui-icon material-icons"></i></a>
+{% endblock %}
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div class="mdui-row">
+        <div class="main-header mdui-typo">
+            <div class="mdui-col-xs-12">
+                <h1>欢迎使用选课系统</h1>
+            </div>
+        </div>
+    </div>
+    {% block welcome_message %}
+    {% endblock %}
+    <div class="login-container">
+        {% block login_container %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

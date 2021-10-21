@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>选课系统主页</title>
+    <link rel="stylesheet" href="../css/mdui.css" />
+</head>
+
+<body
+    class="mdui-appbar-with-toolbar mdui-bottom-nav-fixed mdui-theme-primary-indigo mdui-theme-accent-pink mdui-theme-layout-auto mdui-loaded">
+    <header class="mdui-appbar mdui-appbar-fixed" id="appbar">
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
+            <a href="javascript:;" class="mdui-typo-title">欢迎使用选课系统</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <a href="../user/userUpdate.html" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
+                    class="mdui-icon material-icons">&#xe853;</i></a>
+            <a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
+                    class="mdui-icon material-icons"></i></a>
+            <a href="../logout.html" class="mdui-btn mdui-btn-icon" id="logout-button"><i
+                    class="mdui-icon material-icons">&#xe879;</i></a>
+        </div>
+        <div class="mdui-progress" id="progress-bar" hidden>
+            <div class="mdui-progress-indeterminate"></div>
+        </div>
+    </header>
+
+    <div class="mdui-container">
+        <div id="please-wait">
+            <div class="mdui-typo-display-3 mdui-valign">
+                <p>主页</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar"><a href="javascript:void(0);"
+            class="mdui-ripple mdui-ripple-white mdui-bottom-nav-active">
+            <i class="mdui-icon material-icons">&#xe88a;</i>
+            <label>首页</label>
+        </a>
+        <a href="javascript:void(0);" class="mdui-ripple mdui-ripple-white">
+            <i class="mdui-icon material-icons">&#xe431;</i>
+            <label>全部课程</label>
+        </a>
+        <a href="javascript:void(0);" class="mdui-ripple mdui-ripple-white">
+            <i class="mdui-icon material-icons">&#xe869;</i>
+            <label>系统管理</label>
+        </a>
+    </div>
+
+    <script src="../js/mdui.js"></script>
+</body>
+
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    $("#appbar").load("../appbar/appbar.html");
+    $("#navibar").load("../navibar/navibar.html");
+</script>
+
+</html>

@@ -1,0 +1,54 @@
+{% extends "user/login_bg.html" %}
+{% block welcome_message %}
+<div class="mdui-row">
+    <div class="main-header mdui-typo">
+        <div class="mdui-col-xs-12">
+            {% if from_url == "register" %}
+            <div class="welcome-message mdui-typo-title">注册成功，你的{% if kind == "student" %}学号{% else %}账号{% endif %}是 {{uid}}</div>
+            {% else %}
+            <div class="welcome-message mdui-typo-title">欢迎，请登录</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block login_container %}
+<!-- {% if kind == "student" %}
+<div class="mdui-typo-headline">学生登录</div>
+{% else %}
+<div class="mdui-typo-headline">教师登录</div>
+{% endif %} -->
+<div class="form">
+    <form class="" method="post">
+        {% csrf_token %}
+        <div class="mdui-row">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe853;</i>
+                <label class="mdui-textfield-label">Uid</label>
+                {{form.uid}}
+            </div>
+
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe897;</i>
+                <label class="mdui-textfield-label">Password</label>
+                {{form.password}}
+            </div>
+        </div>
+        <div class="mdui-row">
+            <div class="mdui-col-xs-6">
+                <input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-btn-block" type="submit"
+                    value="登录" />
+            </div>
+            <div class="mdui-col-xs-6">
+                <a class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-block" href="{% url 'register' kind%}">注册</a>
+            </div>
+        </div>
+    </form>
+    <div class="mdui-row">
+        <div class="return-button mdui-col-xs-12"><a class="mdui-btn mdui-btn-block mdui-ripple"
+                href="{% url 'login' %}">返回上一页</a></div>
+    </div>
+</div>
+
+{% endblock %}
