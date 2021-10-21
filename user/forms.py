@@ -35,7 +35,7 @@ class StuRegisterForm(forms.ModelForm):
                   'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
                   'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
                   'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
-                  'birthday': widgets.SelectDateWidget(attrs={'class': 'mdui-select mdui-col-xs-4'}, years=range(datetime.date.today().year - 100, datetime.date.today().year)),
+                  'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'}),
                   'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'}),
                   'info': widgets.TextInput(attrs={'class': 'mdui-textfield-input'})}
 
