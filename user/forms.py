@@ -28,16 +28,16 @@ class StuRegisterForm(forms.ModelForm):
                   'confirm_password',
                   'gender',
                   'birthday',
-                  'email',
-                  'info')
+                  'email'
+                  )
         widgets = {'grade': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
                   'name': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
                   'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
                   'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
                   'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
                   'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'}),
-                  'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'}),
-                  'info': widgets.TextInput(attrs={'class': 'mdui-textfield-input'})}
+                  'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
+                  }
 
     def clean(self):
         cleaned_data = super(StuRegisterForm, self).clean()
@@ -58,7 +58,7 @@ class StuUpdateForm(StuRegisterForm):
                   'gender',
                   'birthday',
                   'email',
-                  'info')
+                  )
 
 
 class TeaRegisterForm(forms.ModelForm):
@@ -72,7 +72,7 @@ class TeaRegisterForm(forms.ModelForm):
                   'gender',
                   'birthday',
                   'email',
-                  'info')
+                  )
 
     def clean(self):
         cleaned_data = super(TeaRegisterForm, self).clean()
