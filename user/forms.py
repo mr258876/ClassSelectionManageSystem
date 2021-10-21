@@ -19,6 +19,8 @@ class StuRegisterForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}))
 
     class Meta:
+        import datetime
+
         model = Student
         fields = ('grade',
                   'name',
@@ -28,6 +30,14 @@ class StuRegisterForm(forms.ModelForm):
                   'birthday',
                   'email',
                   'info')
+        widgets = {'grade': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
+                  'name': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
+                  'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
+                  'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
+                  'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
+                  'birthday': widgets.SelectDateWidget(attrs={'class': 'mdui-select mdui-col-xs-4'}, years=range(datetime.date.today().year - 100, datetime.date.today().year)),
+                  'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'}),
+                  'info': widgets.TextInput(attrs={'class': 'mdui-textfield-input'})}
 
     def clean(self):
         cleaned_data = super(StuRegisterForm, self).clean()
