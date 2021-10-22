@@ -1,25 +1,73 @@
 {% extends "background.html" %}
 {% load static %}
 
-{% block title %}用户信息更新{% endblock %}
+{% block title %}修改个人信息{% endblock %}
 
 {% block nav-button-l %}
 <a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
 {% endblock %}
-{% block nav-title %}用户信息更新{% endblock %}
+{% block nav-title %}修改个人信息{% endblock %}
 {% block nav-button-r %}
 <a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-    class="mdui-icon material-icons"></i></a>
+        class="mdui-icon material-icons"></i></a>
 {% endblock %}
 
 
 {% block content %}
-<div class="register-container">
-    <div class="register-title">修改个人信息</div>
+<div class="main-container mdui-container">
+    <div class="mdui-row">
+        <div class="main-header mdui-typo">
+            <div class="mdui-col-xs-12">
+                <h1>修改个人信息</h1>
+            </div>
+        </div>
+    </div>
     <form method="post" class="form">
         {% csrf_token %}
-        {{form.as_p}}
-        <p><input type="submit" value="修改" class="submit-button" /></p>
+        <div class="mdui-row">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe878;</i>
+                <label class="mdui-textfield-label">Grade</label>
+                {{form.grade}}
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe24e;</i>
+                <label class="mdui-textfield-label">Name</label>
+                {{form.name}}
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe897;</i>
+                <label class="mdui-textfield-label">Password</label>
+                {{form.password}}
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe897;</i>
+                <label class="mdui-textfield-label">Confirm Password</label>
+                {{form.confirm_password}}
+            </div>
+            <div class="mdui-textfield mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe87c;</i>
+                <label class="mdui-textfield-label">Gender</label>
+                {{form.gender}}
+            </div>
+            <div class="mdui-textfield mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe7e9;</i>
+                <label class="mdui-textfield-label">Birthday</label>
+                {{form.birthday}}
+            </div>
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <i class="mdui-icon material-icons">&#xe0be;</i>
+                <label class="mdui-textfield-label">Email</label>
+                {{form.email}}
+            </div>
+        </div>
+
+        <div class="mdui-row">
+            <div class="mdui-col-xs-12">
+                <input class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-btn-block" type="submit"
+                    value="确认修改" />
+            </div>
+        </div>
     </form>
     <div class="mdui-row">
         <div class="return-button mdui-col-xs-12"><a class="mdui-btn mdui-btn-block mdui-ripple"

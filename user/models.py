@@ -23,13 +23,13 @@ class Student(models.Model):
         ("f", "女")
     ]
 
-    uid = models.ForeignKey(User, on_delete=CASCADE)
+    user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=10, choices=gender, default='m', verbose_name="性别")
     birthday = models.DateField(verbose_name="生日")
     email = models.EmailField(verbose_name="邮箱")
     grade = models.CharField(max_length=4, verbose_name="年级")
-    number = models.CharField(max_length=6, verbose_name="年级子学号")
+    number = models.CharField(max_length=6, verbose_name="班级学号")
 
     def get_id(self):
         return self.grade + self.number
@@ -44,15 +44,13 @@ class Teacher(models.Model):
         ("f", "女")
     ]
 
-    uid = models.ForeignKey(User, on_delete=CASCADE)
+    user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=10, choices=genders, default='m', verbose_name="性别")
     birthday = models.DateField(verbose_name="生日")
     email = models.EmailField(verbose_name="邮箱")
     info = ('info', models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介'))
     department_no = models.CharField(max_length=3, verbose_name="院系号")
-    number = models.CharField(max_length=7, verbose_name="院内编号")
-    password = models.CharField(max_length=30, verbose_name="密码")
 
 
 
