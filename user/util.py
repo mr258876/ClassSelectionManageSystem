@@ -11,8 +11,8 @@ def check_login(func):
     # the func method must have the second parameter kind.
     def _check(*args, **kwargs):
         request = args[1]
-        cookie_kind = request.session.get('kind', '')
-        if cookie_kind not in ["student", "teacher"]:
+        cookie_kind = request.session.get('role', '')
+        if cookie_kind not in ["S", "T", "O", "A"]:
             # Not logged in
             to_url = reverse("login")
             return redirect(to_url)
@@ -28,35 +28,24 @@ def check_login(func):
     return _check
 
 
-def get_user(request, kind):
+def get_user(request, role):
     """
 
     :param request:
-    :param kind: teacher or student
+    :param role: user role, 'S', 'T', 'O', or 'A'
     :return: return Teacher instance or Student instance
     """
-    if request.session.get('kind', '') != kind or kind not in ["student", "teacher"]:
+    if request.session.get('role', '') != role or role not in ["S", "T", "O", "A"]:
         return None
 
-    if len(request.session.get('user', '')) != 10:
+    if len(request.session.get('uid', '')) != 10:
         return None
 
-    uid = request.session.get('user')
-    if kind == "student":
-        # 找到对应学生
-        grade = uid[:4]
-        number = uid[4:]
-        student_set = Student.objects.filter(grade=grade, number=number)
-        if student_set.count() == 0:
-            return None
-        return student_set[0]
-    else:
-        # 找到对应老师
-        department_no = uid[:3]
-        number = uid[3:]
-        teacher_set = Teacher.objects.filter(department_no=department_no, number=number)
-        if teacher_set.count() == 0:
-            return None
-        return teacher_set[0]
+    uid = request.session.get('uid')
+    # 找到对应用户
+    userSet = User.objects.filter(uid=uid)
+    if userSet.count() == 0:
+        return None
+    return userSet[0]
 
 

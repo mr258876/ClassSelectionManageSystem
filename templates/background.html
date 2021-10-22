@@ -19,7 +19,7 @@
             <div class="mdui-toolbar-spacer"></div>
             {% block nav-button-r %}{% endblock %}
         </div>
-        <div class="mdui-progress" id="progress-bar" hidden>
+        <div class="mdui-progress" id="progress-bar">
             <div class="mdui-progress-indeterminate"></div>
         </div>
     </header>
@@ -32,5 +32,11 @@
 </body>
 
 {% block script %}{% endblock %}
+
+<script>
+    mdui.$(function () {
+        mdui.$("#progress-bar").prop('hidden', 'hidden')
+    })
+</script>
 
 </html>

@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse, redirect
 from django.views.generic import CreateView, UpdateView
 
-from constants import INVALID_KIND
+from constants import INVALID_KIND, INVALID_FUNC
 from user.forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
 from user.models import User, Student, Teacher
 
@@ -39,7 +39,7 @@ def login(request, *args, **kwargs):
                         if user.role == 'S':
                             kind = 'student'
                         elif user.role == 'T':
-                            kind == 'teacher'
+                            kind = 'teacher'
                         to_url = reverse("course", kwargs={'kind': kind})
                         return redirect(to_url)
 
@@ -55,10 +55,10 @@ def login(request, *args, **kwargs):
 
 
 def logout(request):
-    if request.session.get("user", ""):
-        del request.session["user"]
     if request.session.get("uid", ""):
         del request.session["uid"]
+    if request.session.get("role", ""):
+        del request.session["role"]
     return redirect(reverse("login"))
 
 

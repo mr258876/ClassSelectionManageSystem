@@ -205,9 +205,9 @@ def view_course(request, view_kind):
         select: 选课
         withdraw: 撤课
     """
-    user = get_user(request, "student")
+    user = get_user(request, "S")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "student"}))
+        return redirect(reverse("login", kwargs={"role": "user"}))
 
     is_search = False
     search_key = ""
