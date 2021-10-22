@@ -4,7 +4,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import reverse, redirect
 
 from constants import *
-from user.models import Student, Teacher
+from user.models import Student, Teacher, User
 
 
 def check_login(func):

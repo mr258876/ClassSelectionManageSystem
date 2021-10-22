@@ -4,7 +4,7 @@
 {% block title %}注册{% endblock %}
 
 {% block nav-button-l %}
-<a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
+<a href="{% url 'login' 'user' %}" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
 {% endblock %}
 {% block nav-title %}注册{% endblock %}
 {% block nav-button-r %}
@@ -26,34 +26,22 @@
         {% csrf_token %}
         <div class="mdui-row">
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe878;</i>
-                <label class="mdui-textfield-label">Grade</label>
-                {{form.grade}}
-            </div>
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe24e;</i>
-                <label class="mdui-textfield-label">Name</label>
-                {{form.name}}
+                <i class="mdui-icon material-icons">&#xe853;</i>
+                <label class="mdui-textfield-label">Uid</label>
+                {{form.uid}}
             </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Password</label>
                 {{form.password}}
             </div>
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.confirm_password %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Confirm Password</label>
                 {{form.confirm_password}}
-            </div>
-            <div class="mdui-textfield mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe87c;</i>
-                <label class="mdui-textfield-label">Gender</label>
-                {{form.gender}}
-            </div>
-            <div class="mdui-textfield mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe7e9;</i>
-                <label class="mdui-textfield-label">Birthday</label>
-                {{form.birthday}}
+                {% if form.errors.confirm_password %}
+                <div class="mdui-textfield-error">{{form.errors.confirm_password.0}}</div>
+                {% endif %}
             </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe0be;</i>

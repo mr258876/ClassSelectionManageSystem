@@ -13,8 +13,9 @@ class User(models.Model):
     ]
 
     uid = models.CharField(max_length=8, primary_key=True)
-    password = models.CharField(max_length=40)
-    role = models.CharField(max_length=1, choices=roles, verbose_name="角色")
+    password = models.CharField(max_length=40, null=False)
+    email = models.EmailField(max_length=32, verbose_name="邮箱")
+    role = models.CharField(max_length=1, choices=roles, null=False, verbose_name="角色")
 
 
 class Student(models.Model):
@@ -27,7 +28,6 @@ class Student(models.Model):
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=10, choices=gender, default='m', verbose_name="性别")
     birthday = models.DateField(verbose_name="生日")
-    email = models.EmailField(verbose_name="邮箱")
     grade = models.CharField(max_length=4, verbose_name="年级")
     number = models.CharField(max_length=6, verbose_name="班级学号")
 
@@ -48,9 +48,5 @@ class Teacher(models.Model):
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=10, choices=genders, default='m', verbose_name="性别")
     birthday = models.DateField(verbose_name="生日")
-    email = models.EmailField(verbose_name="邮箱")
-    info = ('info', models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介'))
+    info = models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介')
     department_no = models.CharField(max_length=3, verbose_name="院系号")
-
-
-

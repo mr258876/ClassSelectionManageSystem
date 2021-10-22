@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'scss.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ClassSelection',
-        'HOST': 'lcoalhost',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'classselection',
+        'HOST': 'localhost',
         'PORT': '5432',
         'TIME_ZONE': 'Asia/Shanghai',
-        'USER': 'ClassSelection_django',
+        'USER': 'classselection_django',
         'PASSWORD':'DJANGO',
     },
 }

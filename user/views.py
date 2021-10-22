@@ -7,8 +7,8 @@ from django.shortcuts import render, reverse, redirect
 from django.views.generic import CreateView, UpdateView
 
 from constants import INVALID_KIND
-from user.forms import StuLoginForm, TeaLoginForm, StuRegisterForm, TeaRegisterForm, StuUpdateForm
-from user.models import Student, Teacher
+from user.forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
+from user.models import User, Student, Teacher
 
 
 def home(request):
@@ -17,60 +17,37 @@ def home(request):
 
 # def login(request, kind)
 def login(request, *args, **kwargs):
-    if not kwargs or "kind" not in kwargs or kwargs["kind"] not in ["teacher", "student"]:
-        return HttpResponse(INVALID_KIND)
-
-    kind = kwargs["kind"]
-
     if request.method == 'POST':
-        if kind == "teacher":
-            form = TeaLoginForm(data=request.POST)
-        else:
-            form = StuLoginForm(data=request.POST)
+        form = UserLoginForm(data=request.POST)
 
         if form.is_valid():
             uid = form.cleaned_data["uid"]
-            if len(uid) != 10:
-                form.add_error("uid", "账号长度必须为10")
+            if len(uid) != 8:
+                form.add_error("uid", "账号长度必须为8")
             else:
-                if kind == "teacher":
-                    department_no = uid[:3]
-                    number = uid[3:]
-                    object_set = Teacher.objects.filter(department_no=department_no, number=number)
+                userSet = User.objects.filter(uid=uid)
+                if userSet.count() == 0:
+                    form.add_error("password", "用户名或密码错误")
                 else:
-                    grade = uid[:4]
-                    number = uid[4:]
-                    object_set = Student.objects.filter(grade=grade, number=number)
-                if object_set.count() == 0:
-                    form.add_error("uid", "该账号不存在.")
-                else:
-                    user = object_set[0]
+                    user = userSet[0]
                     if form.cleaned_data["password"] != user.password:
-                        form.add_error("password", "密码不正确.")
+                        form.add_error("password", "用户名或密码错误")
                     else:
-                        request.session['kind'] = kind
-                        request.session['user'] = uid
-                        request.session['id'] = user.id
+                        request.session['uid'] = user.uid
+                        request.session['role'] = user.role
                         # successful login
+                        if user.role == 'S':
+                            kind = 'student'
+                        elif user.role == 'T':
+                            kind == 'teacher'
                         to_url = reverse("course", kwargs={'kind': kind})
                         return redirect(to_url)
 
-            return render(request, 'user/login_detail.html', {'form': form, 'kind': kind})
+            return render(request, 'user/login_detail.html', {'form': form})
     else:
-        context = {'kind': kind}
-        if request.GET.get('uid'):
-            uid = request.GET.get('uid')
-            context['uid'] = uid
-            if kind == "teacher":
-                form = TeaLoginForm({"uid": uid, 'password': '12345678'})
-            else:
-                form = StuLoginForm({"uid": uid, 'password': '12345678'})
-        else:
-            if kind == "teacher":
-                form = TeaLoginForm()
-            else:
-                form = StuLoginForm()
-        context['form'] = form
+        form = UserLoginForm()
+        
+        context = {'form': form}
         if request.GET.get('from_url'):
             context['from_url'] = request.GET.get('from_url')
 
@@ -78,31 +55,30 @@ def login(request, *args, **kwargs):
 
 
 def logout(request):
-    if request.session.get("kind", ""):
-        del request.session["kind"]
     if request.session.get("user", ""):
         del request.session["user"]
-    if request.session.get("id", ""):
-        del request.session["id"]
+    if request.session.get("uid", ""):
+        del request.session["uid"]
     return redirect(reverse("login"))
 
 
-def register(request, kind):
+# 处理注册请求
+def register(request):
     func = None
-    if kind == "student":
-        func = CreateStudentView.as_view()
-    elif kind == "teacher":
-        func = CreateTeacherView.as_view()
+
+    func = CreateUserView.as_view()
+    request.session['needInfoUpdate'] = True
 
     if func:
         return func(request)
     else:
-        return HttpResponse(INVALID_KIND)
+        return HttpResponse(INVALID_FUNC)
 
 
-class CreateStudentView(CreateView):
-    model = Student
-    form_class = StuRegisterForm
+# 创建用户/用户注册
+class CreateUserView(CreateView):
+    model = User
+    form_class = UserRegisterForm
     # fields = "__all__"
     template_name = "user/register.html"
     success_url = "login"
@@ -117,86 +93,36 @@ class CreateStudentView(CreateView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        # 学生注册时选定年级自动生成学号
-        grade = form.cleaned_data["grade"]
-        # order_by默认升序排列，number前的负号表示降序排列
-        student_set = Student.objects.filter(grade=grade).order_by("-number")
-        if student_set.count() > 0:
-            last_student = student_set[0]
-            new_number = str(int(last_student.number) + 1)
-            for i in range(6 - len(new_number)):
-                new_number = "0" + new_number
-        else:
-            new_number = "000001"
-
         # Create, but don't save the new student instance.
-        new_student = form.save(commit=False)
-        # Modify the student
-        new_student.number = new_number
+        new_user = form.save(commit=False)
+        # Set User Role
+        uid = form.cleaned_data['uid']
+        if uid[0] == '1':
+            new_user.role = 'S'
+        elif uid[0] == '3':
+            new_user.role = 'T'
+        elif uid[0] == '8':
+            new_user.role = 'O' 
+        elif uid[0] == '0':
+            new_user.role = 'A'
         # Save the new instance.
-        new_student.save()
+        new_user.save()
         # Now, save the many-to-many data for the form.
         form.save_m2m()
 
-        self.object = new_student
+        self.object = new_user
 
-        uid = grade + new_number
         from_url = "register"
-        base_url = reverse(self.get_success_url(), kwargs={'kind': 'student'})
+        base_url = reverse(self.get_success_url(), kwargs={'role': 'S'})
         return redirect(base_url + '?uid=%s&from_url=%s' % (uid, from_url))
 
 
-class CreateTeacherView(CreateView):
-    model = Teacher
-    form_class = TeaRegisterForm
-    template_name = "user/register.html"
-    success_url = "login"
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            self.object = None
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        # 老师注册时随机生成院系号, 院系号范围为[0,300)
-        department_no = random.randint(0, 300)
-        # 把非三位数的院系号转换为以0填充的三位字符串，如1转换为'001'
-        department_no = '{:0>3}'.format(department_no)
-        teacher_set = Teacher.objects.filter(department_no=department_no).order_by("-number")
-        if teacher_set.count() > 0:
-            last_teacher = teacher_set[0]
-            new_number = int(last_teacher.number) + 1
-            new_number = '{:0>7}'.format(new_number)
-        else:
-            new_number = "0000001"
-
-        # Create, but don't save the new teacher instance.
-        new_teacher = form.save(commit=False)
-        # Modify the teacher
-        new_teacher.department_no = department_no
-        new_teacher.number = new_number
-        # Save the new instance.
-        new_teacher.save()
-        # Now, save the many-to-many data for the form.
-        form.save_m2m()
-
-        self.object = new_teacher
-
-        uid = department_no + new_number
-        from_url = "register"
-        base_url = reverse(self.get_success_url(), kwargs={'kind': 'teacher'})
-        return redirect(base_url + '?uid=%s&from_url=%s' % (uid, from_url))
-
-
-def update(request, kind):
+# 处理教师学生信息更新请求
+def update(request, role):
     func = None
-    if kind == "student":
+    if role == "S":
         func = UpdateStudentView.as_view()
-    elif kind == "teacher":
+    elif role == "T":
         func = UpdateTeacherView.as_view()
 
     if func:
@@ -204,7 +130,7 @@ def update(request, kind):
         if pk:
             context = {
                 "name": request.session.get("name", ""),
-                "kind": request.session.get("kind", ""),
+                "role": request.session.get("role", ""),
             }
             return func(request, pk=pk, context=context)
         else:
@@ -221,23 +147,23 @@ class UpdateStudentView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateStudentView, self).get_context_data(**kwargs)
         context.update(kwargs)
-        context["kind"] = "student"
+        context["role"] = "S"
         return context
 
     def get_success_url(self):
-        return reverse("course", kwargs={"kind": "student"})
+        return reverse("course", kwargs={"role": "S"})
 
 
 class UpdateTeacherView(UpdateView):
     model = Teacher
-    form_class = TeaRegisterForm
+    form_class = TeaUpdateForm
     template_name = "user/update.html"
 
     def get_context_data(self, **kwargs):
         context = super(UpdateTeacherView, self).get_context_data(**kwargs)
         context.update(kwargs)
-        context["kind"] = "teacher"
+        context["role"] = "T"
         return context
 
     def get_success_url(self):
-        return reverse("course", kwargs={"kind": "teacher"})
+        return reverse("course", kwargs={"role": "T"})

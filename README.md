@@ -17,13 +17,16 @@ pip3 install psycopg2==2.9.1
 Setup:
 ```txt
 python manage.py makemigrations
+python manage.py makemigrations user
+python manage.py makemigrations course
 python manage.py migrate
+python manage.py migrate user
+python manage.py migrate course
 ```
 
 ## TODO
 - student opeartion
 - search course
-- form css
 
 
 ## Problems

@@ -4,7 +4,7 @@
     <div class="main-header mdui-typo">
         <div class="mdui-col-xs-12">
             {% if from_url == "register" %}
-            <div class="welcome-message mdui-typo-title">注册成功，你的{% if kind == "student" %}学号{% else %}账号{% endif %}是 {{uid}}</div>
+            <div class="welcome-message mdui-typo-title">注册成功，你的{% if role == "S" %}学号{% else %}账号{% endif %}是 {{uid}}</div>
             {% else %}
             <div class="welcome-message mdui-typo-title">欢迎，请登录</div>
             {% endif %}
@@ -14,25 +14,28 @@
 {% endblock %}
 
 {% block login_container %}
-<!-- {% if kind == "student" %}
-<div class="mdui-typo-headline">学生登录</div>
-{% else %}
-<div class="mdui-typo-headline">教师登录</div>
-{% endif %} -->
 <div class="form">
     <form class="" method="post">
         {% csrf_token %}
         <div class="mdui-row">
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.uid or form.errors.password %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe853;</i>
                 <label class="mdui-textfield-label">Uid</label>
                 {{form.uid}}
+                {% if form.errors.uid %}
+                <div class="mdui-textfield-error">{{form.errors.uid.0}}</div>
+                {% elif form.errors.password %}
+                <div class="mdui-textfield-error">{{form.errors.password.0}}</div>
+                {% endif %}
             </div>
 
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.password %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Password</label>
                 {{form.password}}
+                {% if form.errors.password %}
+                <div class="mdui-textfield-error">{{form.errors.password.0}}</div>
+                {% endif %}
             </div>
         </div>
         <div class="mdui-row">
@@ -41,7 +44,7 @@
                     value="登录" />
             </div>
             <div class="mdui-col-xs-6">
-                <a class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-block" href="{% url 'register' kind%}">注册</a>
+                <a class="mdui-btn mdui-btn-raised mdui-ripple mdui-btn-block" href="{% url 'register' %}">注册</a>
             </div>
         </div>
     </form>
