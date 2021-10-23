@@ -1,15 +1,28 @@
 {% extends "background.html" %}
 {% load static %}
 
-{% block title %}修改个人信息{% endblock %}
+{% block title %}
+    {% if force != True %}修改个人信息
+    {% else %}完善个人信息{% endif %}
+{% endblock %}
 
 {% block nav-button-l %}
-<a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '返回'}"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
+{% if force != True %}
+<a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '返回'}"><i
+        class="mdui-icon material-icons">&#xe5c4;</i></a>
+{% endif %}
 {% endblock %}
-{% block nav-title %}修改个人信息{% endblock %}
+
+{% block nav-title %}
+    {% if force != True %}修改个人信息
+    {% else %}完善个人信息{% endif %}
+{% endblock %}
+
 {% block nav-button-r %}
-<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-        class="mdui-icon material-icons"></i></a>
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"
+    mdui-tooltip="{content: '刷新'}"><i class="mdui-icon material-icons"></i></a>
+<a href="{% url 'logout' %}" class="mdui-btn mdui-btn-icon" id="refresh-button" mdui-tooltip="{content: '退出'}"><i
+        class="mdui-icon material-icons">&#xe879;</i></a>
 {% endblock %}
 
 
@@ -18,48 +31,44 @@
     <div class="mdui-row">
         <div class="main-header mdui-typo">
             <div class="mdui-col-xs-12">
-                <h1>修改个人信息</h1>
+                {% if force != True %}
+                    <h1>修改个人信息</h1>
+                {% else %}
+                    <h1>欢迎，请完善个人信息以继续</h1>
+                {% endif %}
             </div>
         </div>
     </div>
+
     <form method="post" class="form">
         {% csrf_token %}
         <div class="mdui-row">
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe878;</i>
-                <label class="mdui-textfield-label">Grade</label>
-                {{form.grade}}
-            </div>
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe24e;</i>
                 <label class="mdui-textfield-label">Name</label>
+                <label class="mdui-textfield-helper">您的姓名</label>
                 {{form.name}}
-            </div>
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe897;</i>
-                <label class="mdui-textfield-label">Password</label>
-                {{form.password}}
-            </div>
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe897;</i>
-                <label class="mdui-textfield-label">Confirm Password</label>
-                {{form.confirm_password}}
             </div>
             <div class="mdui-textfield mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe87c;</i>
                 <label class="mdui-textfield-label">Gender</label>
+                <label class="mdui-textfield-helper">您的性别</label>
                 {{form.gender}}
             </div>
             <div class="mdui-textfield mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe7e9;</i>
                 <label class="mdui-textfield-label">Birthday</label>
+                <label class="mdui-textfield-helper">您的出生日期</label>
                 {{form.birthday}}
             </div>
+            {% if role == 'teacher' %}
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe0be;</i>
-                <label class="mdui-textfield-label">Email</label>
-                {{form.email}}
+                <i class="mdui-icon material-icons">&#xe24e;</i>
+                <label class="mdui-textfield-label">Info</label>
+                <label class="mdui-textfield-helper">您的简介</label>
+                {{form.info}}
             </div>
+            {% endif %}
         </div>
 
         <div class="mdui-row">

@@ -7,13 +7,18 @@ from .models import Student, Teacher, User
 
 # 用户登陆表单
 class UserLoginForm(forms.Form):
-    uid = forms.CharField(widget=widgets.TextInput(attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}'}))
-    password = forms.CharField(widget=widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}))
+    uid = forms.CharField(widget=widgets.TextInput(
+        attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}'}))
+    password = forms.CharField(widget=widgets.PasswordInput(
+        attrs={'class': 'mdui-textfield-input'}))
 
 
 # 用户注册表单
 class UserRegisterForm(forms.ModelForm):
-    confirm_password = forms.CharField(max_length=40, widget=widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}))
+    password = forms.CharField(max_length=16, widget=widgets.PasswordInput(
+        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}))
+    confirm_password = forms.CharField(max_length=16, widget=widgets.PasswordInput(
+        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}))
 
     class Meta:
         model = User
@@ -23,10 +28,10 @@ class UserRegisterForm(forms.ModelForm):
                   'email',
                   )
         widgets = {'uid': widgets.TextInput(attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}'}),
-                  'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}),
-                  'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
-                  'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input', 'maxlength': 32})
-                  }
+                   'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$'}),
+                   'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
+                   'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
+                   }
 
     def clean(self):
         cleaned_data = super(UserRegisterForm, self).clean()
@@ -40,7 +45,10 @@ class UserRegisterForm(forms.ModelForm):
 
 # 用户信息更新表单
 class UserUpdateForm(forms.ModelForm):
-    confirm_password = forms.CharField(widget=widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}))
+    password = forms.CharField(max_length=16, widget=widgets.PasswordInput(
+        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$'}))
+    confirm_password = forms.CharField(max_length=40, widget=widgets.PasswordInput(
+        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$'}))
 
     class Meta:
         model = User
@@ -49,9 +57,9 @@ class UserUpdateForm(forms.ModelForm):
                   'email',
                   )
         widgets = {'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
-                  'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
-                  'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
-                  }
+                   'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
+                   'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
+                   }
 
     def clean(self):
         cleaned_data = super(UserRegisterForm, self).clean()
@@ -72,9 +80,9 @@ class StuUpdateForm(forms.ModelForm):
                   'birthday'
                   )
         widgets = {'name': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
-                  'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
-                  'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'})
-                  }
+                   'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
+                   'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'})
+                   }
 
 
 # 教师个人信息更新
@@ -85,11 +93,9 @@ class TeaUpdateForm(forms.ModelForm):
                   'gender',
                   'birthday',
                   'info',
-                  'department_no'
                   )
         widgets = {'name': widgets.TextInput(attrs={'class': 'mdui-textfield-input'}),
-                  'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
-                  'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'}),
-                  'info': widgets.Textarea(attrs={'class': 'mdui-textfield-input'}),
-                  'department_no': widgets.TextInput(attrs={'class': 'mdui-textfield-input'})
-                  }
+                   'gender': widgets.Select(attrs={'class': 'mdui-select mdui-textfield-input'}),
+                   'birthday': widgets.DateInput(attrs={'class': 'mdui-textfield-input', 'type': 'date'}),
+                   'info': widgets.Textarea(attrs={'class': 'mdui-textfield-input'}),
+                   }

@@ -7,7 +7,7 @@
 
 {% block login_container %}
 <div class="login-kind student-login-button mdui-col-xs-12 mdui-col-md-6">
-    <a href="{% url 'login' 'user' %}" class="mdui-ripple">
+    <a href="{% url 'login' 'student' %}" class="mdui-ripple">
         <div class="mdui-card">
             <div class="mdui-card-media">
                 <img src="{% static 'img/student.webp' %}" class="mdui-img-rounded" />
@@ -22,7 +22,7 @@
 </div>
 
 <div class="login-kind teacher-login-button mdui-col-xs-12 mdui-col-md-6">
-    <a href="{% url 'login' 'user' %}" class="mdui-ripple">
+    <a href="{% url 'login' 'teacher' %}" class="mdui-ripple">
         <div class="mdui-card">
             <div class="mdui-card-media">
                 <img src="{% static 'img/teacher.webp' %}" class="mdui-img-rounded" />

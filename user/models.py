@@ -3,31 +3,32 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 
+from django.core import serializers
 
 class User(models.Model):
     roles = [
-        ("S", "学生"),
-        ("T", "教师"),
-        ("O", "院系"),
-        ("A", "系统管理员")
+        ("student", "学生"),
+        ("teacher", "教师"),
+        ("dept", "院系"),
+        ("admin", "系统管理员")
     ]
 
     uid = models.CharField(max_length=8, primary_key=True)
     password = models.CharField(max_length=40, null=False)
     email = models.EmailField(max_length=32, verbose_name="邮箱")
-    role = models.CharField(max_length=1, choices=roles, null=False, verbose_name="角色")
+    role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")
 
 
 class Student(models.Model):
-    gender = [
+    genders = [
         ("m", "男"),
         ("f", "女")
     ]
 
     user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
-    gender = models.CharField(max_length=10, choices=gender, default='m', verbose_name="性别")
-    birthday = models.DateField(verbose_name="生日")
+    gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
+    birthday = models.DateField(null=True, verbose_name="生日")
     grade = models.CharField(max_length=4, verbose_name="年级")
     number = models.CharField(max_length=6, verbose_name="班级学号")
 
@@ -46,7 +47,7 @@ class Teacher(models.Model):
 
     user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
-    gender = models.CharField(max_length=10, choices=genders, default='m', verbose_name="性别")
-    birthday = models.DateField(verbose_name="生日")
-    info = models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介')
+    gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
+    birthday = models.DateField(null=True, verbose_name="生日")
     department_no = models.CharField(max_length=3, verbose_name="院系号")
+    info = models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介')

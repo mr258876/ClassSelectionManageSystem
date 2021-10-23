@@ -4,12 +4,14 @@
 {% block title %}注册{% endblock %}
 
 {% block nav-button-l %}
-<a href="{% url 'login' 'user' %}" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '返回'}"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
+<a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '返回'}"><i class="mdui-icon material-icons">&#xe5c4;</i></a>
 {% endblock %}
 {% block nav-title %}注册{% endblock %}
 {% block nav-button-r %}
-<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-        class="mdui-icon material-icons"></i></a>
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button" mdui-tooltip="{content: '刷新'}"><i
+    class="mdui-icon material-icons"></i></a>
+<a href="{% url 'logout' %}" class="mdui-btn mdui-btn-icon" id="refresh-button" mdui-tooltip="{content: '退出'}"><i
+        class="mdui-icon material-icons">&#xe879;</i></a>
 {% endblock %}
 
 
@@ -25,11 +27,6 @@
     <form method="post" class="form">
         {% csrf_token %}
         <div class="mdui-row">
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                <i class="mdui-icon material-icons">&#xe853;</i>
-                <label class="mdui-textfield-label">Uid</label>
-                {{form.uid}}
-            </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Password</label>

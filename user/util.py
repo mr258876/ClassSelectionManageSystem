@@ -7,38 +7,58 @@ from constants import *
 from user.models import Student, Teacher, User
 
 
-def check_login(func):
-    # the func method must have the second parameter kind.
-    def _check(*args, **kwargs):
-        request = args[1]
-        cookie_kind = request.session.get('role', '')
-        if cookie_kind not in ["S", "T", "O", "A"]:
-            # Not logged in
-            to_url = reverse("login")
-            return redirect(to_url)
-        elif len(args) >= 2:
-            # the second parameter must be kind
-            kind = args[1]
-            if kind == cookie_kind:
-                return func(*args, **kwargs)
-            else:
-                return HttpResponse(ILLEGAL_KIND)
-        return HttpResponse(INVALID_URL)
+# 检查登录状态
+def checkLogin(request):
+    uid = request.session.get('uid', '')
+    role = request.session.get('role', '')
+    if not uid or not role:
+        return False
+    
+    userSet = User.objects.filter(uid=uid)
+    if userSet.count() == 0:
+        return False
 
-    return _check
+    if userSet[0].role != role:
+        return False
+
+    return True
 
 
-def get_user(request, role):
+# 登陆验证
+def loginVerify(uid, password):
+    if len(uid) != 8:
+        return (False, ("uid", "账号长度必须为8"), None)
+    
+    userSet = User.objects.filter(uid=uid)
+    if userSet.count() == 0:
+        return (False, ("password", "用户名或密码错误"), None)
+
+    user = userSet[0]
+    if password == user.password:
+        return (True, None, user)
+
+    return (False, ("password", "用户名或密码错误"), None)
+
+
+# 检查是否需要更新个人信息
+def isNeedInfoUpdate(user):
+    if user.role == 'dept' or user.role == 'admin':
+        return False
+    
+    roleObject = getattr(user, user.role)
+    if not roleObject.name or not roleObject.gender or not roleObject.birthday:
+        return True
+    return False
+
+
+# 获取用户对象
+def getUser(request):
     """
 
     :param request:
-    :param role: user role, 'S', 'T', 'O', or 'A'
     :return: return Teacher instance or Student instance
     """
-    if request.session.get('role', '') != role or role not in ["S", "T", "O", "A"]:
-        return None
-
-    if len(request.session.get('uid', '')) != 10:
+    if len(request.session.get('uid', '')) != 8:
         return None
 
     uid = request.session.get('uid')
@@ -49,3 +69,24 @@ def get_user(request, role):
     return userSet[0]
 
 
+# 获取用户身份对象
+def getRoleObject(request, role):
+    """
+
+    :param request:
+    :param role: user role, 'student', 'teacher', 'operator', 'admin'
+    :return: return Student, Teacher or Dept instance
+    """
+
+    if len(request.session.get('uid', '')) != 8:
+        return None
+
+    uid = request.session.get('uid')
+    # 找到对应用户
+    userSet = User.objects.filter(uid=uid)
+    if userSet.count() == 0:
+        return None
+    if hasattr(userSet[0], role):
+        return getattr(userSet[0], role)
+    else:
+        return None
