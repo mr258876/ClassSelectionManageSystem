@@ -2,21 +2,17 @@
 {% load static %}
 
 {% block title %}
-    {% if view.kwargs.force != True %}修改个人信息
-    {% else %}完善个人信息{% endif %}
+    选课系统 - {% if force != True %}修改个人信息{% else %}完善个人信息{% endif %}
 {% endblock %}
 
 {% block nav-button-l %}
-{% if force != True %}
+{% if not force %}
 <a href="javaScript:history.back();" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '返回'}"><i
         class="mdui-icon material-icons">&#xe5c4;</i></a>
 {% endif %}
 {% endblock %}
 
-{% block nav-title %}
-    {% if view.kwargs.force != True %}修改个人信息
-    {% else %}完善个人信息{% endif %}
-{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
 
 {% block nav-button-r %}
 <a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"
@@ -27,14 +23,11 @@
 
 
 {% block content %}
-{{force}}
-{{view.args.force}}
-{{view.kwargs.force}}
 <div class="main-container mdui-container">
     <div class="mdui-row">
         <div class="main-header mdui-typo">
             <div class="mdui-col-xs-12">
-                {% if view.kwargs.force != True %}
+                {% if force != True %}
                     <h1>修改个人信息</h1>
                 {% else %}
                     <h1>欢迎，请完善个人信息以继续</h1>

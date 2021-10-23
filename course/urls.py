@@ -20,7 +20,7 @@ from course.cbvs import ScheduleDeleteView, ScoreUpdateView, RateUpdateView, Stu
 
 urlpatterns = [
     path('', to_home, name="course"),
-    path('<slug:kind>/', home, name="course"),
+    path('<slug:role>/', home, name="course"),
     path('teacher/create_course', create_course, name="create_course"),
     path('teacher/view_detail/<int:course_id>', view_detail, name="view_detail"),
     path('teacher/create_schedule/<int:course_id>', create_schedule, name="create_schedule"),

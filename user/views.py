@@ -65,6 +65,7 @@ def login(request, *args, **kwargs):
 
         context = {'form': form}
         if request.GET.get('from_url'):
+            context['uid'] = request.GET.get('uid')
             context['from_url'] = request.GET.get('from_url')
 
         return render(request, 'user/login_detail.html', context)
@@ -212,11 +213,12 @@ class UpdateStudentView(UpdateView):
     form_class = StuUpdateForm
     template_name = "user/update_info.html"
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(UpdateStudentView, self).get_context_data(**kwargs)
-    #     context.update(kwargs)
-    #     context["role"] = "student"
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(UpdateStudentView, self).get_context_data(**kwargs)
+        context.update(kwargs)
+        context["force"] = self.request.session.get("needInfoUpdate", "")
+        context["role"] = "student"
+        return context
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "student"})
@@ -228,11 +230,12 @@ class UpdateTeacherView(UpdateView):
     form_class = TeaUpdateForm
     template_name = "user/update_info.html"
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(UpdateTeacherView, self).get_context_data(**kwargs)
-    #     context.update(kwargs)
-    #     context["role"] = "teacher"
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(UpdateTeacherView, self).get_context_data(**kwargs)
+        context.update(kwargs)
+        context["force"] = self.request.session.get("needInfoUpdate", "")
+        context["role"] = "teacher"
+        return context
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "teacher"})
