@@ -20,6 +20,7 @@ def home(request):
 # 用户登录
 @require_http_methods(['GET', 'POST'])
 def login(request, *args, **kwargs):
+    # HTTP - POST
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
 
@@ -35,6 +36,7 @@ def login(request, *args, **kwargs):
                 request.session['uid'] = user.uid
                 request.session['role'] = user.role
 
+                # Check whether user need to complete info
                 if request.session.get("needInfoUpdate", "") or isNeedInfoUpdate(user):
                     request.session['needInfoUpdate'] = True
                     return redirect(reverse("update_info"))
@@ -46,8 +48,11 @@ def login(request, *args, **kwargs):
                 form.add_error(loginResult[1][0], loginResult[1][1])
 
             return render(request, 'user/login_detail.html', {'form': form})
+
+    # HTTP - GET
     else:
         if checkLogin(request):
+            # Check whether user need to complete info
             if request.session.get("needInfoUpdate", "") or isNeedInfoUpdate(User.objects.get(uid=request.session.get("uid", ""))):
                 request.session['needInfoUpdate'] = True
                 return redirect(reverse("update_info"))
@@ -67,10 +72,7 @@ def login(request, *args, **kwargs):
 
 @require_http_methods(['GET'])
 def logout(request):
-    if request.session.get("uid", ""):
-        del request.session["uid"]
-    if request.session.get("role", ""):
-        del request.session["role"]
+    request.session.flush()
     return redirect(reverse("login"))
 
 
@@ -79,7 +81,6 @@ def register(request):
     func = None
 
     func = CreateUserView.as_view()
-    request.session['needInfoUpdate'] = True
 
     if func:
         return func(request)
@@ -133,6 +134,8 @@ class CreateUserView(CreateView):
             roleObject = Teacher(user=new_user)
             roleObject.save()
             new_user.teacher = roleObject
+
+        self.request.session['needInfoUpdate'] = True
 
         self.object = new_user
 
@@ -209,11 +212,11 @@ class UpdateStudentView(UpdateView):
     form_class = StuUpdateForm
     template_name = "user/update_info.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(UpdateStudentView, self).get_context_data(**kwargs)
-        context.update(kwargs)
-        context["role"] = "student"
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(UpdateStudentView, self).get_context_data(**kwargs)
+    #     context.update(kwargs)
+    #     context["role"] = "student"
+    #     return context
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "student"})
@@ -225,11 +228,11 @@ class UpdateTeacherView(UpdateView):
     form_class = TeaUpdateForm
     template_name = "user/update_info.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(UpdateTeacherView, self).get_context_data(**kwargs)
-        context.update(kwargs)
-        context["role"] = "teacher"
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(UpdateTeacherView, self).get_context_data(**kwargs)
+    #     context.update(kwargs)
+    #     context["role"] = "teacher"
+    #     return context
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "teacher"})

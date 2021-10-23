@@ -1,10 +1,11 @@
 {% extends "user/login_bg.html" %}
+
 {% block welcome_message %}
 <div class="mdui-row">
     <div class="main-header mdui-typo">
         <div class="mdui-col-xs-12">
             {% if from_url == "register" %}
-            <div class="welcome-message mdui-typo-title">注册成功，你的账号是 {{uid}}</div>
+            <div class="welcome-message mdui-typo-title">注册成功，你的账号是{{view.kwargs.uid}}</div>
             {% else %}
             <div class="welcome-message mdui-typo-title">欢迎，请登录</div>
             {% endif %}

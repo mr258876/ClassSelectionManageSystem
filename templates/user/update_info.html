@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {% if force != True %}修改个人信息
+    {% if view.kwargs.force != True %}修改个人信息
     {% else %}完善个人信息{% endif %}
 {% endblock %}
 
@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block nav-title %}
-    {% if force != True %}修改个人信息
+    {% if view.kwargs.force != True %}修改个人信息
     {% else %}完善个人信息{% endif %}
 {% endblock %}
 
@@ -27,11 +27,14 @@
 
 
 {% block content %}
+{{force}}
+{{view.args.force}}
+{{view.kwargs.force}}
 <div class="main-container mdui-container">
     <div class="mdui-row">
         <div class="main-header mdui-typo">
             <div class="mdui-col-xs-12">
-                {% if force != True %}
+                {% if view.kwargs.force != True %}
                     <h1>修改个人信息</h1>
                 {% else %}
                     <h1>欢迎，请完善个人信息以继续</h1>
