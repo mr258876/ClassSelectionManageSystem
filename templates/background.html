@@ -3,11 +3,11 @@
 {% load static %}
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>
         {% block title %}{% endblock %}
     </title>
-    <link href="{% static 'css/mdui.css' %}" rel="stylesheet">
+    <link href="{% static 'css/mdui.css' %}" rel="stylesheet" />
 </head>
 
 <body
@@ -19,16 +19,25 @@
             <div class="mdui-toolbar-spacer"></div>
             {% block nav-button-r %}{% endblock %}
         </div>
-        <div class="mdui-progress" id="progress-bar" hidden>
+        <div class="mdui-progress" id="progress-bar">
             <div class="mdui-progress-indeterminate"></div>
         </div>
     </header>
     
     {% block content %}{% endblock %}
 
+    {% block nav-bar %}{% endblock %}
+
     <script src="{% static 'js/mdui.min.js' %}"></script>
 </body>
 
 {% block script %}{% endblock %}
+
+<script>
+    mdui.$(function () {
+        mdui.$("#progress-bar").prop('hidden', 'hidden');
+        mdui.mutation();
+    });
+</script>
 
 </html>

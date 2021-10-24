@@ -1,3 +1,4 @@
+INVALID_FUNC = "Internal Server Error. Please Contact IT Support."
 
 INVALID_KIND = "Invalid kind.kind should be student or teacher."
 ILLEGAL_KIND = "Illegal kind for you."
@@ -18,5 +19,5 @@ COURSE_OPERATION = {
     2: "结束选课",
     3: "结课",
     4: "给分",
-    5: "查看详情"
+    5: "查看详情",
 }

@@ -4,9 +4,11 @@ from user import views
 
 urlpatterns = [
     path('login/', views.home, name="login"),
-    path('login/<slug:kind>', views.login, name="login"),
-    path('register/<slug:kind>', views.register, name="register"),
+    path('login/<slug:role>', views.login, name="login"),
+    path('register/', views.register, name="register"),
 
-    path('update/<slug:kind>', views.update, name="update"),
+    path('update_info/', views.update_info, name="update_info"),
+    path('update_security/', views.update_security, name="update_security"),
+
     path('logout/', views.logout, name="logout"),
 ]

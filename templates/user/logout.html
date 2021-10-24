@@ -1,0 +1,25 @@
+{% extends "background.html" %}
+{% load static %}
+
+{% block title %}选课系统-登出{% endblock %}
+
+{% block nav-title %}感谢使用选课系统{% endblock %}
+
+{% block content %}
+<div class="mdui-container">
+    <div class="mdui-typo">
+        <h1><i class="mdui-icon material-icons">&#xe879;</i> 您已登出</h1>
+        <p>现在可以安全地关闭浏览器了</p>
+        <p>即将跳转至登录页面。如果浏览器没有反应，请点击<a href="/ProjectMIS307v2">这里</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    setInterval("redirect()", 4000);//1000为1秒钟
+    function redirect() {
+        window.location.href = '/ProjectMIS307v2';
+    }
+</script>
+{% endblock %}

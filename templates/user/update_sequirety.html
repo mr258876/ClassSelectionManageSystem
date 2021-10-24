@@ -8,8 +8,10 @@
 {% endblock %}
 {% block nav-title %}注册{% endblock %}
 {% block nav-button-r %}
-<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-        class="mdui-icon material-icons"></i></a>
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button" mdui-tooltip="{content: '刷新'}"><i
+    class="mdui-icon material-icons"></i></a>
+<a href="{% url 'logout' %}" class="mdui-btn mdui-btn-icon" id="refresh-button" mdui-tooltip="{content: '退出'}"><i
+        class="mdui-icon material-icons">&#xe879;</i></a>
 {% endblock %}
 
 
@@ -25,21 +27,10 @@
     <form method="post" class="form">
         {% csrf_token %}
         <div class="mdui-row">
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.uid %} mdui-textfield-invalid {% endif %}">
-                <i class="mdui-icon material-icons">&#xe853;</i>
-                <label class="mdui-textfield-label">Uid</label>
-                {{form.uid}}
-                {% if form.errors.uid %}
-                <div class="mdui-textfield-error">{{form.errors.uid.0}}</div>
-                {% else %}
-                <div class="mdui-textfield-helper">8位用户id</div>
-                {% endif %}
-            </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Password</label>
                 {{form.password}}
-                <div class="mdui-textfield-helper">8-16位数字与字母密码，不可包含特殊字符</div>
             </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.confirm_password %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe897;</i>
@@ -47,14 +38,11 @@
                 {{form.confirm_password}}
                 {% if form.errors.confirm_password %}
                 <div class="mdui-textfield-error">{{form.errors.confirm_password.0}}</div>
-                {% else %}
-                <div class="mdui-textfield-helper">请确认您的密码</div>
                 {% endif %}
             </div>
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe0be;</i>
                 <label class="mdui-textfield-label">Email</label>
-                <div class="mdui-textfield-helper">电子邮箱，长度不超过32字符</div>
                 {{form.email}}
             </div>
         </div>

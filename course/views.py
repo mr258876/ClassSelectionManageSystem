@@ -5,32 +5,32 @@ from django.db.models import Q
 from constants import INVALID_KIND, INVALID_REQUEST_METHOD, ILLEGAL_KIND
 from course.forms import CourseForm, ScheduleForm
 from course.models import Course, StudentCourse, Schedule
-from user.util import get_user
+from user.util import getRoleObject
 
 from django.utils import timezone
 
 
 def to_home(request):
-    kind = request.session.get('kind', '')
-    return redirect(reverse("course", kwargs={"kind": kind}))
+    role = request.session.get('role', '')
+    return redirect(reverse("course", kwargs={"role": role}))
 
 
-def home(request, kind):
-    if kind == "teacher":
+def home(request, role):
+    if role == "teacher":
         return teacher_home(request)
-    elif kind == "student":
+    elif role == "student":
         return student_home(request)
     return HttpResponse(INVALID_KIND)
 
 
 def teacher_home(request):
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     info = {
         "name": user.name,
-        "kind": "teacher",
+        "role": "teacher",
     }
 
     is_search = False
@@ -56,13 +56,13 @@ def student_home(request):
 
 
 def create_course(request):
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     info = {
         "name": user.name,
-        "kind": "teacher",
+        "role": "teacher",
     }
 
     if request.method == 'POST':
@@ -73,7 +73,7 @@ def create_course(request):
             obj.teacher = user
 
             obj.save()
-            return redirect(reverse("course", kwargs={"kind": "teacher"}))
+            return redirect(reverse("course", kwargs={"role": "teacher"}))
     elif request.method == 'GET':
         form = CourseForm()
     else:
@@ -83,13 +83,13 @@ def create_course(request):
 
 
 def create_schedule(request, course_id):
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     info = {
         "name": user.name,
-        "kind": "teacher",
+        "role": "teacher",
     }
 
     course = Course.objects.get(pk=course_id)
@@ -111,9 +111,9 @@ def create_schedule(request, course_id):
 
 
 def delete_schedule(request, schedule_id):
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     schedule = Schedule.objects.get(pk=schedule_id)
 
@@ -135,13 +135,13 @@ def handle_course(request, course_id, handle_kind):
             4: "给分完成"
     :return:
     """
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     info = {
         "name": user.name,
-        "kind": "teacher",
+        "role": "teacher",
     }
 
     course = Course.objects.get(pk=course_id)
@@ -170,13 +170,13 @@ def handle_course(request, course_id, handle_kind):
 
 
 def view_detail(request, course_id):
-    user = get_user(request, "teacher")
+    user = getRoleObject(request, "teacher")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "teacher"}))
+        return redirect(reverse("login", kwargs={"role": "teacher"}))
 
     info = {
         "name": user.name,
-        "kind": "teacher",
+        "role": "teacher",
     }
 
     course = Course.objects.get(pk=course_id)
@@ -205,9 +205,9 @@ def view_course(request, view_kind):
         select: 选课
         withdraw: 撤课
     """
-    user = get_user(request, "student")
+    user = getRoleObject(request, 'student')
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "student"}))
+        return redirect(reverse("login", kwargs={"role": "user"}))
 
     is_search = False
     search_key = ""
@@ -218,7 +218,7 @@ def view_course(request, view_kind):
 
     info = {
         "name": user.name,
-        "kind": "student",
+        "role": "student",
     }
 
     course_list = []
@@ -268,9 +268,9 @@ def operate_course(request, operate_kind, course_id):
         select: 选课
         withdraw: 撤课
     """
-    user = get_user(request, "student")
+    user = getRoleObject(request, "student")
     if not user:
-        return redirect(reverse("login", kwargs={"kind": "student"}))
+        return redirect(reverse("login", kwargs={"role": "student"}))
 
     if operate_kind not in ["select", "withdraw"]:
         return HttpResponse(ILLEGAL_KIND)
