@@ -74,7 +74,7 @@ def login(request, *args, **kwargs):
 @require_http_methods(['GET'])
 def logout(request):
     request.session.flush()
-    return redirect(reverse("login"))
+    return render(request, 'user/logout.html')
 
 
 # 处理注册请求
