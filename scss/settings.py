@@ -133,3 +133,4 @@ STATICFILES_DIRS = [
 # Customized User Model
 # https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#auth-custom-user
 AUTH_USER_MODEL = 'user.User'
+LOGOUT_REDIRECT_URL = 'ProjectMIS307v2/'

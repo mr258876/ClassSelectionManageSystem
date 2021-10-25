@@ -19,26 +19,26 @@
     <form class="" method="post">
         {% csrf_token %}
         <div class="mdui-row">
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.uid or form.errors.password %} mdui-textfield-invalid {% endif %}">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe853;</i>
                 <label class="mdui-textfield-label">Uid</label>
                 <div class="mdui-textfield-helper">您的用户id</div>
-                {{form.uid}}
-                {% if form.errors.uid %}
-                <div class="mdui-textfield-error">{{form.errors.uid.0}}</div>
+                {{ form.username }}
+                <!-- {% if form.errors %}
+                <div class="mdui-textfield-error">{{form.errors.invalid_login}}</div>
                 {% elif form.errors.password %}
-                <div class="mdui-textfield-error">{{form.errors.password.0}}</div>
-                {% endif %}
+                <div class="mdui-textfield-error">{{form.errors}}</div>
+                {% endif %} -->
             </div>
 
-            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.password %} mdui-textfield-invalid {% endif %}">
+            <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors %} mdui-textfield-invalid {% endif %}">
                 <i class="mdui-icon material-icons">&#xe897;</i>
                 <label class="mdui-textfield-label">Password</label>
                 <div class="mdui-textfield-helper">您的密码</div>
-                {{form.password}}
-                {% if form.errors.password %}
+                {{ form.password }}
+                <!-- {% if form.errors.password %}
                 <div class="mdui-textfield-error">{{form.errors.password.0}}</div>
-                {% endif %}
+                {% endif %} -->
             </div>
         </div>
         <div class="mdui-row">
@@ -54,8 +54,19 @@
     <br/>
     <div class="mdui-row">
         <div class="return-button mdui-col-xs-12"><a class="mdui-btn mdui-btn-block mdui-ripple"
-                href="{% url 'login' %}">返回上一页</a></div>
+                href="{% url 'home' %}">返回上一页</a></div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block script %}
+{% if form.errors %}
+<script>
+mdui.snackbar({
+    message: '登录失败：{{form.non_field_errors}}',
+    position: 'top'
+  });
+</script>
+{% endif %}
 {% endblock %}

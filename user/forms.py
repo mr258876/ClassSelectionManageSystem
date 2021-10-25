@@ -2,12 +2,13 @@
 # -*- coding:utf-8- -*-
 from django import forms
 from django.forms import widgets
+from django.contrib.auth.forms import AuthenticationForm
 from .models import Student, Teacher, User
 
 
 # 用户登陆表单
-class UserLoginForm(forms.Form):
-    uid = forms.CharField(widget=widgets.TextInput(
+class UserLoginForm(AuthenticationForm):
+    username = forms.CharField(widget=widgets.TextInput(
         attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}'}))
     password = forms.CharField(widget=widgets.PasswordInput(
         attrs={'class': 'mdui-textfield-input'}))

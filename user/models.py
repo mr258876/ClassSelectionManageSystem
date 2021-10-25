@@ -6,29 +6,6 @@ from django.db.models.deletion import CASCADE
 
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
-# 继承AbstractBaseUser以及PermissionsMixin以利用django自带用户登录以及权限管理
-class User(AbstractBaseUser, PermissionsMixin):
-    roles = [
-        ("student", "学生"),
-        ("teacher", "教师"),
-        ("dept", "院系"),
-        ("admin", "系统管理员")
-    ]
-
-    uid = models.CharField(max_length=8, primary_key=True)
-    USERNAME_FIELD = 'uid'
-
-    email = models.EmailField(max_length=32, verbose_name="邮箱")
-    EMAIL_FIELD = 'email'
-
-    role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")
-    REQUIRED_FIELD = ["role"]
-
-    is_active = models.BooleanField(default=True, verbose_name="用户状态")
-    is_superuser = models.BooleanField(default=False, verbose_name="是否为管理员")
-
-    def __str__(self):
-        return self.uid
 
 # 用户类管理器
 class UserManager(BaseUserManager):
@@ -62,6 +39,34 @@ class UserManager(BaseUserManager):
     
     def create_superuser(self, uid, password, email=None, user_role=None):
         return _create_user(uid, password, email, user_role='admin')
+
+
+# 继承AbstractBaseUser以及PermissionsMixin以利用django自带用户登录以及权限管理
+class User(AbstractBaseUser, PermissionsMixin):
+    objects = UserManager()
+
+    roles = [
+        ("student", "学生"),
+        ("teacher", "教师"),
+        ("dept", "院系"),
+        ("admin", "系统管理员")
+    ]
+
+    uid = models.CharField(max_length=8, primary_key=True)
+    USERNAME_FIELD = 'uid'
+
+    email = models.EmailField(max_length=32, verbose_name="邮箱")
+    EMAIL_FIELD = 'email'
+
+    role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")
+    REQUIRED_FIELD = ["role"]
+
+    is_active = models.BooleanField(default=True, verbose_name="用户状态")
+    is_superuser = models.BooleanField(default=False, verbose_name="是否为管理员")
+
+    def __str__(self):
+        return self.uid
+
 
 
 # 学生类

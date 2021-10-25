@@ -12,75 +12,36 @@ from user.forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdat
 from user.models import User, Student, Teacher
 from user.util import checkLogin, loginVerify, isNeedInfoUpdate
 
-
-def home(request):
-    return render(request, "user/login_home.html")
+from django.contrib.auth.views import LoginView, LogoutView
 
 
-# 用户登录
+# 处理登录请求
 @require_http_methods(['GET', 'POST'])
 def login(request, *args, **kwargs):
-    # HTTP - POST
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
+    func = UserLoginView.as_view()
+    if func:
+        return func(request)
 
-        if form.is_valid():
-            uid = form.cleaned_data["uid"]
-            password = form.cleaned_data["password"]
-
-            loginResult = loginVerify(uid, password)
-            if loginResult[0]:
-                # Login success
-                user = loginResult[2]
-
-                request.session['uid'] = user.uid
-                request.session['role'] = user.role
-
-                # Check whether user need to complete info
-                if request.session.get("needInfoUpdate", "") or isNeedInfoUpdate(user):
-                    request.session['needInfoUpdate'] = True
-                    return redirect(reverse("update_info"))
-
-                to_url = reverse("course", kwargs={'kind': user.role})
-                return redirect(to_url)
-
-            else:
-                form.add_error(loginResult[1][0], loginResult[1][1])
-
-            return render(request, 'user/login_detail.html', {'form': form})
-
-    # HTTP - GET
-    else:
-        if checkLogin(request):
-            # Check whether user need to complete info
-            if request.session.get("needInfoUpdate", "") or isNeedInfoUpdate(User.objects.get(uid=request.session.get("uid", ""))):
-                request.session['needInfoUpdate'] = True
-                return redirect(reverse("update_info"))
-
-            to_url = reverse("course", kwargs={
-                             'kind': request.session.get("role", "")})
-            return redirect(to_url)
-
-        form = UserLoginForm()
-
-        context = {'form': form}
-        if request.GET.get('from_url'):
-            context['uid'] = request.GET.get('uid')
-            context['from_url'] = request.GET.get('from_url')
-
-        return render(request, 'user/login_detail.html', context)
+# 登录视图
+class UserLoginView(LoginView):
+    template_name = 'user/login_detail.html'
+    authentication_form = UserLoginForm
 
 
+# 处理登出请求
 @require_http_methods(['GET'])
 def logout(request):
-    request.session.flush()
-    return render(request, 'user/logout.html')
+    func = UserLogoutView.as_view()
+    if func:
+        return func(request)
+
+# 登出视图
+class UserLogoutView(LogoutView):
+    template_name = 'user/logout.html'
 
 
 # 处理注册请求
 def register(request):
-    func = None
-
     func = CreateUserView.as_view()
 
     if func:
