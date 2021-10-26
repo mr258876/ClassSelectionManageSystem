@@ -13,6 +13,7 @@ from user.models import User, Student, Teacher
 from user.util import checkLogin, loginVerify, isNeedInfoUpdate
 
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.decorators import login_required
 
 
 # 处理登录请求
@@ -23,12 +24,15 @@ def login(request, *args, **kwargs):
         return func(request)
 
 # 登录视图
+
+
 class UserLoginView(LoginView):
     template_name = 'user/login_detail.html'
     authentication_form = UserLoginForm
 
 
 # 处理登出请求
+@login_required
 @require_http_methods(['GET'])
 def logout(request):
     func = UserLogoutView.as_view()
@@ -53,7 +57,7 @@ def register(request):
 class UserCreationView(CreateView):
     form_class = UserRegisterForm
     template_name = "user/register.html"
-    success_url = "login"
+    success_url = "info"
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -78,12 +82,15 @@ class UserCreationView(CreateView):
 
         self.object = new_user
 
-        from_url = "register"
-        base_url = reverse(self.get_success_url())
-        return redirect(reverse(self.get_success_url()))
+        self.request.session['title'] = '注册成功'
+        self.request.session['info'] = '您的用户名是' + form.cleaned_data['username']
+        self.request.session['next'] = 'login'
+        url = reverse(self.get_success_url())
+        return redirect(url)
 
 
 # 处理密码邮箱更新请求
+@login_required
 def update_security(request):
     func = UpdateUserView.as_view()
 
@@ -117,6 +124,7 @@ class UpdateUserView(UpdateView):
 
 
 # 处理教师学生信息更新请求
+@login_required
 def update_info(request):
     role = request.session.get("role", "")
 

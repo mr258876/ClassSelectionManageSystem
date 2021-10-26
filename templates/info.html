@@ -1,0 +1,37 @@
+{% extends "background.html" %}
+{% load static %}
+
+{% block title %}欢迎选课系统{% endblock %}
+
+{% block nav-button-l %}
+<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
+{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
+{% block nav-button-r %}
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
+        class="mdui-icon material-icons"></i></a>
+{% endblock %}
+
+
+{% block content %}
+<div class="mdui-container">
+    <div class="mdui-typo">
+        <h1>{{ title }}</h1>
+        <p>{{ info }}</p>
+        {% if next %}
+        <p>即将跳转。如果浏览器没有反应，请点击<a href="{% url next %}">这里</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% if next %}
+<script>
+    setInterval("redirect()", 4000);//1000为1秒钟
+    function redirect() {
+        window.location.href = "{% url next %}";
+    }
+</script>
+{% endif %}
+{% endblock %}

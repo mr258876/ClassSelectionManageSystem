@@ -9,10 +9,12 @@ from user.util import getRoleObject
 
 from django.utils import timezone
 
+from django.contrib.auth.decorators import login_required
+
 
 def to_home(request):
     role = request.session.get('role', '')
-    return redirect(reverse("course", kwargs={"role": role}))
+    return redirect(reverse("course", kwargs={"role": request.user.role}))
 
 
 def home(request, role):
@@ -197,6 +199,7 @@ def view_detail(request, course_id):
     return render(request, "course/teacher/course.html", context)
 
 
+@login_required
 def view_course(request, view_kind):
     """
     :param view_kind:
@@ -205,9 +208,7 @@ def view_course(request, view_kind):
         select: 选课
         withdraw: 撤课
     """
-    user = getRoleObject(request, 'student')
-    if not user:
-        return redirect(reverse("login", kwargs={"role": "user"}))
+    user = request.user.student
 
     is_search = False
     search_key = ""
