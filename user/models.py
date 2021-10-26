@@ -24,21 +24,33 @@ class UserManager(BaseUserManager):
                 raise ValueError('Unexpected uid')
 
         user = self.model(
-            email=self.normalize_email(email),
-            role=user_role,
+            uid = uid,
+            email = self.normalize_email(email),
+            role = user_role,
         )
 
         user.set_password(password)
         if user_role == 'admin':
             user.is_admin = True
         user.save(using=self._db)
+
+        # Attach Role Object
+        if user.role == 'student':
+            roleObject = Student(user=user)
+            roleObject.save()
+            user.student = roleObject
+        elif user.role == 'teacher':
+            roleObject = Teacher(user=user)
+            roleObject.save()
+            user.teacher = roleObject
+
         return user
     
     def create_user(self, uid, password=None, email=None, user_role=None):
-        return _create_user(uid, password, email, user_role)
+        return self._create_user(uid, password, email, user_role)
     
     def create_superuser(self, uid, password, email=None, user_role=None):
-        return _create_user(uid, password, email, user_role='admin')
+        return self._create_user(uid, password, email, user_role='admin')
 
 
 # 继承AbstractBaseUser以及PermissionsMixin以利用django自带用户登录以及权限管理

@@ -41,20 +41,17 @@ class UserLogoutView(LogoutView):
 
 
 # 处理注册请求
+@require_http_methods(['GET', 'POST'])
 def register(request):
-    func = CreateUserView.as_view()
+    func = UserCreationView.as_view()
 
     if func:
         return func(request)
-    else:
-        return HttpResponse(INVALID_FUNC)
 
 
 # 创建用户/用户注册
-class CreateUserView(CreateView):
-    model = User
+class UserCreationView(CreateView):
     form_class = UserRegisterForm
-    # fields = "__all__"
     template_name = "user/register.html"
     success_url = "login"
 
@@ -68,49 +65,26 @@ class CreateUserView(CreateView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        # Create, but don't save the new student instance. 创建用户对象，但暂时不提交对象
-        new_user = form.save(commit=False)
+        new_user = form.save()
+        # # Create, but don't save the new student instance. 创建用户对象，但暂时不提交对象以进行操作
+        # new_user = form.save(commit=False)
 
-        # Set User Role
-        uid = form.cleaned_data['uid']
-        if uid[0] == '1':
-            new_user.role = 'student'
-        elif uid[0] == '3':
-            new_user.role = 'teacher'
-        elif uid[0] == '8':
-            new_user.role = 'dept'
-        elif uid[0] == '0':
-            new_user.role = 'admin'
-
-        # Save the new instance. 保存用户对象
-        new_user.save()
-        # Now, save the many-to-many data for the form. 保存多对多关系
-        form.save_m2m()
-
-        # Attach Role Object
-        if new_user.role == 'student':
-            roleObject = Student(user=new_user)
-            roleObject.save()
-            new_user.student = roleObject
-        elif new_user.role == 'teacher':
-            roleObject = Teacher(user=new_user)
-            roleObject.save()
-            new_user.teacher = roleObject
+        # # Save the new instance. 保存用户对象
+        # new_user.save()
+        # # Now, save the many-to-many data for the form. 保存多对多关系
+        # form.save_m2m()
 
         self.request.session['needInfoUpdate'] = True
 
         self.object = new_user
 
         from_url = "register"
-        base_url = reverse(self.get_success_url(),
-                           kwargs={'role': new_user.role})
-        return redirect(base_url + '?uid=%s&from_url=%s' % (uid, from_url))
+        base_url = reverse(self.get_success_url())
+        return redirect(reverse(self.get_success_url()))
 
 
 # 处理密码邮箱更新请求
 def update_security(request):
-    func = None
-
     func = UpdateUserView.as_view()
 
     if func:
@@ -144,8 +118,6 @@ class UpdateUserView(UpdateView):
 
 # 处理教师学生信息更新请求
 def update_info(request):
-    func = None
-
     role = request.session.get("role", "")
 
     if role == "student":
