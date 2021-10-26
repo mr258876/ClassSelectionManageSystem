@@ -2,7 +2,8 @@
 # -*- coding:utf-8- -*-
 from django import forms
 from django.forms import widgets
-from .models import Student, Teacher, User
+from .models import User
+from course.models import Student, Teacher
 
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import get_user_model
@@ -85,12 +86,12 @@ class UserUpdateForm(forms.ModelForm):
                    }
 
     def clean(self):
-        cleaned_data = super(UserRegisterForm, self).clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        if confirm_password != password:
-            self.add_error('confirm_password', 'Password does not match.')
-
+        cleaned_data = super().clean()
+        password1 = self.cleaned_data['password1']  
+        password2 = self.cleaned_data['password2']  
+  
+        if password1 and password2 and password1 != password2:  
+            raise ValidationError("Password don't match")
         return cleaned_data
 
 

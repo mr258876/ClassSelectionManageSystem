@@ -1,38 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
+{% extends "background.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        {% block title %}{% endblock %}
-    </title>
-    <link href="{% static 'css/mdui.min.css' %}" rel="stylesheet">
-</head>
+{% block nav-button-l %}
+<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
+{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
 
-<body class="mdui-appbar-with-toolbar mdui-bottom-nav-fixed mdui-theme-primary-indigo mdui-theme-accent-pink mdui-theme-layout-auto mdui-loaded">
-    <header class="mdui-appbar mdui-appbar-fixed" id="appbar">
-        <div class="mdui-toolbar mdui-color-theme">
-            <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
-            <a href="javascript:;" class="mdui-typo-title">欢迎使用选课系统</a>
-            <div class="mdui-toolbar-spacer"></div>
-            <a href="{% url 'update_security' %}" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-                    class="mdui-icon material-icons">&#xe853;</i></a>
-            <a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
-                    class="mdui-icon material-icons"></i></a>
-            <a href="{% url 'logout' %}" class="mdui-btn mdui-btn-icon" id="logout-button"><i
-                    class="mdui-icon material-icons">&#xe879;</i></a>
+{% block style %}
+<style>
+    .mdui-bottom-nav{
+        height: 75px;
+    }
+</style>
+{% endblock %}
+
+{% block nav-button-r %}
+<button class="mdui-btn mdui-btn-icon" id="user-button" mdui-menu="{target: '#user-menu'}"
+    mdui-tooltip="{content: '个人信息'}"><i class="mdui-icon material-icons">&#xe853;</i></button>
+<ul class="mdui-menu" id="user-menu">
+    <li class="mdui-list-item mdui-ripple">
+        <div class="mdui-list-item-avatar"><i class="mdui-icon material-icons">&#xe853;</i></div>
+        <!-- <div class="mdui-list-item-avatar"><img src=""/></div> -->
+        <div class="mdui-list-item-content">
+            <div class="mdui-list-item-title">{{user.uid}}</div>
+            <div class="mdui-list-item-text mdui-list-item-one-line">{{user.role}}</div>
         </div>
-        <div class="mdui-progress" id="progress-bar" hidden>
-            <div class="mdui-progress-indeterminate"></div>
-        </div>
-    </header>
+    </li>
+    <li class="mdui-menu-item">
+        <a href="{% url 'update_info' %}" class="mdui-ripple">
+            <i class="mdui-icon material-icons">&#xe8a6;</i>
+            修改个人信息
+        </a>
+    </li>
+    <li class="mdui-menu-item">
+        <a href="{% url 'update_security' %}" class="mdui-ripple">
+            <i class="mdui-icon material-icons">&#xe897;</i>
+            更改密码
+        </a>
+    </li>
+    <li class="mdui-menu-item">
+        <a href="{% url 'update_security' %}" class="mdui-ripple">
+            <i class="mdui-icon material-icons">&#xe0be;</i>
+            更改邮箱
+        </a>
+    </li>
+</ul>
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"
+    mdui-tooltip="{content: '刷新'}"><i class="mdui-icon material-icons"></i></a>
+<a href="{% url 'logout' %}" class="mdui-btn mdui-btn-icon" id="logout-button" mdui-tooltip="{content: '退出'}"><i
+        class="mdui-icon material-icons">&#xe879;</i></a>
+{% endblock %}
 
-    <div class="main-content">
-        {% block content %}{% endblock %}
-    </div>
 
-    <script src="{% static 'js/mdui.min.js' %}"></script>
-</body>
-
-</html>
+{% block nav-bar %}
+<div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar">
+    {% if user.role == "student" %}
+    <a href="{% url 'view_course' 'select' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'select'%}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe86c;</i>
+        <label>选课</label>
+    </a>
+    <a href="{% url 'view_course' 'withdraw' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'withdraw'%}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe15c;</i>
+        <label>退课</label>
+    </a>
+    <a href="{% url 'view_course' 'is_end' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'is_end'%}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe149;</i>
+        <label>查看结课课程</label>
+    </a>
+    <a href="{% url 'view_course' 'current' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'current'%}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe85d;</i>
+        <label>查看当前课程</label>
+    </a>
+    {% elif user.role == "teacher"%}
+    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe8b6;</i>
+        <label>搜索课程</label>
+    </a>
+    <a href="{% url 'create_course' %}" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe3a0;</i>
+        <label>开设课程</label>
+    </a>
+    {% elif user.role == "admin"%}
+    <a href="javascript:void(0);" class="mdui-ripple mdui-ripple-white mdui-bottom-nav-active">
+        <i class="mdui-icon material-icons">&#xe869;</i>
+        <label>系统管理</label>
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

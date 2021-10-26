@@ -71,7 +71,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
 
     role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")
-    REQUIRED_FIELD = ["role"]
+    need_complete_info = models.BooleanField(default=True, verbose_name="是否需要更新个人信息")
+    REQUIRED_FIELD = ["role", "need_complete_info"]
 
     is_active = models.BooleanField(default=True, verbose_name="用户状态")
     is_superuser = models.BooleanField(default=False, verbose_name="是否为管理员")
@@ -88,7 +89,7 @@ class Student(models.Model):
         ("f", "女")
     ]
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
     birthday = models.DateField(null=True, verbose_name="生日")
@@ -109,7 +110,7 @@ class Teacher(models.Model):
         ("f", "女")
     ]
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=CASCADE, primary_key=True)
     name = models.CharField(max_length=50, verbose_name="姓名")
     gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
     birthday = models.DateField(null=True, verbose_name="生日")

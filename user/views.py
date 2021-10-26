@@ -8,9 +8,8 @@ from django.views.generic import CreateView, UpdateView
 from django.views.decorators.http import require_http_methods
 
 from constants import INVALID_KIND, INVALID_FUNC
-from user.forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
-from user.models import User, Student, Teacher
-from user.util import checkLogin, loginVerify, isNeedInfoUpdate
+from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
+from .models import User, Student, Teacher
 
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
@@ -19,6 +18,9 @@ from django.contrib.auth.decorators import login_required
 # 处理登录请求
 @require_http_methods(['GET', 'POST'])
 def login(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        return redirect('course')
+
     func = UserLoginView.as_view()
     if func:
         return func(request)
@@ -78,10 +80,9 @@ class UserCreationView(CreateView):
         # # Now, save the many-to-many data for the form. 保存多对多关系
         # form.save_m2m()
 
-        self.request.session['needInfoUpdate'] = True
-
         self.object = new_user
 
+        # 使用session传参
         self.request.session['title'] = '注册成功'
         self.request.session['info'] = '您的用户名是' + form.cleaned_data['username']
         self.request.session['next'] = 'login'
@@ -95,17 +96,7 @@ def update_security(request):
     func = UpdateUserView.as_view()
 
     if func:
-        pk = request.session.get("uid", "")
-        if pk:
-            context = {
-                "name": request.session.get("name", ""),
-                "role": request.session.get("role", ""),
-            }
-            return func(request, pk=pk, context=context)
-        else:
-            return redirect(reverse("login"))
-    else:
-        return HttpResponse(INVALID_KIND)
+        return func(request, pk=request.user.uid)
 
 
 # 用户密码更新
@@ -126,7 +117,8 @@ class UpdateUserView(UpdateView):
 # 处理教师学生信息更新请求
 @login_required
 def update_info(request):
-    role = request.session.get("role", "")
+    uid = request.user.uid
+    role = request.user.role
 
     if role == "student":
         func = UpdateStudentView.as_view()
@@ -134,18 +126,7 @@ def update_info(request):
         func = UpdateTeacherView.as_view()
 
     if func:
-        pk = request.session.get("uid", "")
-        if pk:
-            context = {
-                "name": request.session.get("name", ""),
-                "role": request.session.get("role", ""),
-                "force": request.session.get("needInfoUpdate", ""),
-            }
-            return func(request, pk=pk, context=context)
-        else:
-            return redirect(reverse("login"))
-    else:
-        return HttpResponse(INVALID_KIND)
+        return func(request, pk=uid)
 
 
 # 学生信息更新
@@ -154,12 +135,19 @@ class UpdateStudentView(UpdateView):
     form_class = StuUpdateForm
     template_name = "user/update_info.html"
 
+    # 获取url参数
     def get_context_data(self, **kwargs):
         context = super(UpdateStudentView, self).get_context_data(**kwargs)
         context.update(kwargs)
-        context["force"] = self.request.session.get("needInfoUpdate", "")
+        context["force"] = self.request.user.need_complete_info
         context["role"] = "student"
         return context
+
+    def form_valid(self, form):
+        self.object.user.need_complete_info = False
+        self.object.user.save()
+        super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "student"})
@@ -171,12 +159,19 @@ class UpdateTeacherView(UpdateView):
     form_class = TeaUpdateForm
     template_name = "user/update_info.html"
 
+    # 获取url参数
     def get_context_data(self, **kwargs):
         context = super(UpdateTeacherView, self).get_context_data(**kwargs)
         context.update(kwargs)
-        context["force"] = self.request.session.get("needInfoUpdate", "")
+        context["force"] = self.request.user.need_complete_info
         context["role"] = "teacher"
         return context
+    
+    def form_valid(self, form):
+        self.object.user.need_complete_info = False
+        self.object.user.save()
+        super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse("course", kwargs={"role": "teacher"})
