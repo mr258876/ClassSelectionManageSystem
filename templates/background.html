@@ -7,8 +7,10 @@
     <title>
         {% block title %}{% endblock %}
     </title>
-    <link href="{% static 'css/mdui.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/mdui.min.css' %}" rel="stylesheet" />
 </head>
+
+{% block style %}{% endblock %}
 
 <body
     class="mdui-appbar-with-toolbar mdui-bottom-nav-fixed mdui-theme-primary-indigo mdui-theme-accent-pink mdui-theme-layout-auto mdui-loaded">

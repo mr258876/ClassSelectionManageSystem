@@ -9,6 +9,7 @@ def current_year():
     return datetime.date.today().year
 
 
+# 课程
 class Course(models.Model):
     credits = [
         (1, 1),
@@ -61,6 +62,7 @@ def weekday_choices():
     return [(i+1, weekday_str[i]) for i in range(7)]
 
 
+# 课程表
 class Schedule(models.Model):
     weekday = models.IntegerField(choices=weekday_choices(), verbose_name="日期")
     start_time = models.TimeField(verbose_name="上课时间")
@@ -91,6 +93,7 @@ class Schedule(models.Model):
         return s
 
 
+# 学生评分
 class StudentCourse(models.Model):
     create_time = models.DateTimeField(auto_now=True)
     with_draw = models.BooleanField(default=False)

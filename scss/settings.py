@@ -129,3 +129,10 @@ STATIC_URL = 'ProjectMIS307v2/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# Customized User Model
+# https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#auth-custom-user
+AUTH_USER_MODEL = 'user.User'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'course'
+# LOGOUT_REDIRECT_URL = '/ProjectMIS307v2'
