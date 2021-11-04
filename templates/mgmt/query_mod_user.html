@@ -1,0 +1,80 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-检索用户{% endblock %}
+{% block nav-title %}检索用户{% endblock %}
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="search-user">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">检索用户</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-user-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
+                <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
+                    <option value="uid" selected>UID</option>
+                    <option value="name">姓名</option>
+                </select>
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
+                    <input class="mdui-textfield-input" type="text" name='keyword' />
+                </div>
+                <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
+                    style="margin-top: 16px;" onclick="searchUser();">检索</div>
+            </div>
+        </form>
+    </div>
+
+    <table class="mdui-table">
+        <thead>
+            <tr>
+                <td>UID</td>
+                <td>姓名</td>
+                <td>E-Mail</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<script>
+    function searchUser() {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: "{% url 'search_user_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#add-user-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    message = res.message
+                } else {
+                    for (var key in res.message) {
+                        message = message + res.message[key] + "\n";
+                    }
+                }
+                mdui.snackbar({ message: message, position: 'top' });
+                if (res.success) {
+                    drawTable(res.data);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    };
+</script>
+{% endblock %}

@@ -43,6 +43,12 @@ class UserManager(BaseUserManager):
             roleObject = Teacher(user=user)
             roleObject.save()
             user.teacher = roleObject
+        else:
+            # 院系、管理员不需要更新信息
+            user.need_complete_info = False
+        
+        if user.role=="admin":
+            user.is_superuser = True
 
         return user
     

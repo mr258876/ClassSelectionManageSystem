@@ -2,9 +2,9 @@
 # -*- coding:utf-8- -*-
 from django import forms
 from django.forms import widgets
-from .models import User
-from course.models import Student, Teacher
+from .models import User, Student, Teacher 
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import get_user_model
 
@@ -32,13 +32,13 @@ class UserRegisterForm(UserCreationForm):
     email = forms.CharField(widget=widgets.EmailInput(
         attrs={'class': 'mdui-textfield-input'}))
     
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        fields = ('username', 'email')
+        fields = UserCreationForm.Meta.fields + ('email',)
 
-    def username_clean(self):  
+    def clean_username(self):  
         username = self.cleaned_data['username'].lower()
-        new = User.objects.filter(username = username)  
+        new = User.objects.filter(uid = username)  
         if new.count():  
             raise ValidationError("User Already Exist")  
         return username  
@@ -64,7 +64,7 @@ class UserRegisterForm(UserCreationForm):
             self.cleaned_data['password1'],
             self.cleaned_data['email'],
         )  
-        return user  
+        return user
 
 
 # 用户信息更新表单

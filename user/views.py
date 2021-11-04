@@ -1,13 +1,10 @@
 # usr/bin/env python3
 # -*- coding:utf-8- -*-
-import random
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, reverse, redirect
 from django.views.generic import CreateView, UpdateView
 from django.views.decorators.http import require_http_methods
 
-from constants import INVALID_KIND, INVALID_FUNC
 from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
 from .models import User, Student, Teacher
 
@@ -26,8 +23,6 @@ def login(request, *args, **kwargs):
         return func(request)
 
 # 登录视图
-
-
 class UserLoginView(LoginView):
     template_name = 'user/login_detail.html'
     authentication_form = UserLoginForm
@@ -54,8 +49,7 @@ def register(request):
     if func:
         return func(request)
 
-
-# 创建用户/用户注册
+# 创建用户/用户注册视图
 class UserCreationView(CreateView):
     form_class = UserRegisterForm
     template_name = "user/register.html"
@@ -72,13 +66,6 @@ class UserCreationView(CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        # # Create, but don't save the new student instance. 创建用户对象，但暂时不提交对象以进行操作
-        # new_user = form.save(commit=False)
-
-        # # Save the new instance. 保存用户对象
-        # new_user.save()
-        # # Now, save the many-to-many data for the form. 保存多对多关系
-        # form.save_m2m()
 
         self.object = new_user
 
@@ -98,8 +85,7 @@ def update_security(request):
     if func:
         return func(request, pk=request.user.uid)
 
-
-# 用户密码更新
+# 用户密码更新视图
 class UpdateUserView(UpdateView):
     model = User
     form_class = UserUpdateForm
@@ -119,6 +105,7 @@ class UpdateUserView(UpdateView):
 def update_info(request):
     uid = request.user.uid
     role = request.user.role
+    func = None
 
     if role == "student":
         func = UpdateStudentView.as_view()
@@ -127,9 +114,14 @@ def update_info(request):
 
     if func:
         return func(request, pk=uid)
+    else:
+        # 使用session传参
+        request.session['title'] = '提示'
+        request.session['info'] = '您没有可更改的个人信息'
+        request.session['next'] = 'course'
+        return redirect('info')
 
-
-# 学生信息更新
+# 学生信息更新视图
 class UpdateStudentView(UpdateView):
     model = Student
     form_class = StuUpdateForm
@@ -140,8 +132,10 @@ class UpdateStudentView(UpdateView):
         context = super(UpdateStudentView, self).get_context_data(**kwargs)
         context.update(kwargs)
         context["force"] = self.request.user.need_complete_info
-        context["role"] = "student"
         return context
+    
+    def get_success_url(self):
+        return reverse("course", kwargs={"role": "student"})
 
     def form_valid(self, form):
         self.object.user.need_complete_info = False
@@ -149,11 +143,7 @@ class UpdateStudentView(UpdateView):
         super().form_valid(form)
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
-        return reverse("course", kwargs={"role": "student"})
-
-
-# 教师信息更新
+# 教师信息更新视图
 class UpdateTeacherView(UpdateView):
     model = Teacher
     form_class = TeaUpdateForm
@@ -164,14 +154,13 @@ class UpdateTeacherView(UpdateView):
         context = super(UpdateTeacherView, self).get_context_data(**kwargs)
         context.update(kwargs)
         context["force"] = self.request.user.need_complete_info
-        context["role"] = "teacher"
         return context
+    
+    def get_success_url(self):
+        return reverse("course", kwargs={"role": "student"})
     
     def form_valid(self, form):
         self.object.user.need_complete_info = False
         self.object.user.save()
         super().form_valid(form)
         return HttpResponseRedirect(self.get_success_url())
-
-    def get_success_url(self):
-        return reverse("course", kwargs={"role": "teacher"})

@@ -1,0 +1,222 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-增添用户{% endblock %}
+{% block nav-title %}增添/导入用户{% endblock %}
+
+{% block tab-bar %}
+<div class="mdui-tab mdui-color-theme mdui-tab-centered" mdui-tab>
+    <a href="#add" class="mdui-ripple mdui-ripple-white">
+        <label>增添用户</label>
+    </a>
+    <a href="#import" class="mdui-ripple mdui-ripple-white">
+        <label>导入用户</label>
+    </a>
+</div>
+{% endblock %}
+
+
+{% block body-extra-class %}mdui-appbar-with-tab{% endblock %}
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="add">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">增添用户</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-user-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.username %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe853;</i>
+                    <label class="mdui-textfield-label">Uid</label>
+                    <input class="mdui-textfield-input" type="text" pattern='(^[0138])[0-9]{1,7}' name='username' />
+                    <div class="mdui-textfield-helper">8位用户id</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.password2 %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe897;</i>
+                    <label class="mdui-textfield-label">Password</label>
+                    <input class="mdui-textfield-input" type="password"
+                        pattern='^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$' name='password' />
+                    <div class="mdui-textfield-helper">8-16位数字与字母密码，不可包含特殊字符</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.email %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe0be;</i>
+                    <label class="mdui-textfield-label">Email</label>
+                    <div class="mdui-textfield-helper">电子邮箱，长度不超过32字符</div>
+                    <input class="mdui-textfield-input" type="email" name='email' />
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.email %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe8d3;</i>
+                    <label class="mdui-textfield-label">Authority</label>
+                    <div class="mdui-textfield-helper">用户权限</div>
+                    <select class="mdui-select mdui-textfield-input" name="auth">
+                        <option value="auto" selected>自动分配</option>
+                        <option value="student">学生</option>
+                        <option value="teacher">教师</option>
+                        <option value="dept">院系</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12">
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addUser();">添加用户
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="import">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="import">导入用户</h1>
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <div id="file-selector">
+            <div class="mdui-row">
+                请选择要导入的文件(csv, UTF-8)：
+                <label id="fileN"></label>
+                <div class="mdui-btn mdui-btn-raised mdui-ripple" onclick="getFile();">选择文件</div>
+                <form id="csv-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input id="getF" name="file" type="file" accept="text/csv" style="display: none;" />
+                </form>
+                <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="phrase();">解析</div>
+            </div>
+        </div>
+
+        <br />
+
+        <div id="csv-phrase" hidden>
+            表格预览：
+            <table class="mdui-table mdui-table-hoverable">
+                <thead>
+                    <form id="tableHead-form">
+                        {% csrf_token %}
+                        <input id="tableF" name="file" type="file" accept="text/csv" style="display: none;" />
+                        <tr id="tr-table-head">
+
+                        </tr>
+                    </form>
+                </thead>
+                <tbody id="table-body">
+
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<script>
+    function getFile() {
+        $("#getF").click();
+    };
+    $("#getF").on("change", function () {
+        var filePath = $(this).val();
+        if (filePath.indexOf("csv") != -1) {
+            var arr = filePath.split('\\');
+            var fileName = arr[arr.length - 1];
+            $("#fileN").html(fileName);
+        } else {
+            $("#fileN").html("");
+            return false
+        }
+    });
+    function addUser() {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: "{% url 'add_user_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#add-user-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    message = res.message
+                } else {
+                    for (var key in res.message) {
+                        message = message + res.message[key] + "\n";
+                    }
+                }
+                mdui.snackbar({ message: message, position: 'top' });
+                if (res.success) {
+                    drawTable(res.data);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    };
+    function phrase() {
+        var f = document.getElementById("getF").files;
+        if (f.length == 0) {
+            mdui.snackbar({ message: "未选择文件", position: 'top' });
+        } else {
+            $("#progress-bar").removeAttr("hidden");
+
+            $.ajax({
+                url: "{% url 'csv_phrase_api' %}",
+                type: 'POST',
+                cache: false,
+                data: new FormData($("#csv-form")[0]),
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    $("#progress-bar").prop("hidden", "hidden");
+                    mdui.snackbar({ message: res.message, position: 'top' });
+                    if (res.success) {
+                        drawTable(res.data);
+                    }
+                },
+                error: function (res) {
+                    $("#progress-bar").prop("hidden", "hidden");
+                    mdui.snackbar({ message: "操作失败", position: 'top' });
+                }
+            });
+        }
+    };
+    function drawTable(list) {
+        if (list) {
+            $("#csv-phrase").removeAttr("hidden");
+            for (var i = 0; i < list[0].length; i++) {
+                $("#tr-table-head").append("<td><select name='col" + i + "' class='mdui-select'><option value='toSelect' selected>选择类别</option><option value='noEffect' selected>无作用</option><option value='uid'>UID</option><option value='password'>密码</option><option value='email'>E-Mail</option><option value='role'>角色</option></select></td>");
+            }
+            for (var i = 0; i < list.length; i++) {
+                var innerText = "<tr>"
+                for (var j = 0; j < list[0].length; j++) {
+                    innerText = innerText + "<td>" + list[i][j] + "</td>"
+                }
+                innerText = innerText + "</tr>"
+                $("#table-body").append(innerText)
+            }
+            mdui.mutation();
+        }
+    }
+</script>
+{% endblock %}
