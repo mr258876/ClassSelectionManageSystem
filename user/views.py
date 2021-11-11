@@ -139,6 +139,7 @@ class UpdateStudentView(UpdateView):
 
     def form_valid(self, form):
         self.object.user.need_complete_info = False
+        self.object.user.name = form.cleaned_data['name']
         self.object.user.save()
         super().form_valid(form)
         return HttpResponseRedirect(self.get_success_url())
@@ -161,6 +162,7 @@ class UpdateTeacherView(UpdateView):
     
     def form_valid(self, form):
         self.object.user.need_complete_info = False
+        self.object.user.name = form.cleaned_data['name']
         self.object.user.save()
         super().form_valid(form)
         return HttpResponseRedirect(self.get_success_url())

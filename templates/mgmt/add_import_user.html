@@ -36,6 +36,13 @@
                     <div class="mdui-textfield-helper">8位用户id</div>
                 </div>
                 <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.username %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe853;</i>
+                    <label class="mdui-textfield-label">Name</label>
+                    <input class="mdui-textfield-input" type="text" name='name' />
+                    <div class="mdui-textfield-helper">用户名(可选)</div>
+                </div>
+                <div
                     class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.password2 %} mdui-textfield-invalid {% endif %}">
                     <i class="mdui-icon material-icons">&#xe897;</i>
                     <label class="mdui-textfield-label">Password</label>
@@ -158,7 +165,7 @@
                     message = res.message
                 } else {
                     for (var key in res.message) {
-                        message = message + res.message[key] + "\n";
+                        message = message + key + res.message[key] + "\n";
                     }
                 }
                 mdui.snackbar({ message: message, position: 'top' });

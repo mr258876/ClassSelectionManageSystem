@@ -9,6 +9,10 @@ from .forms import *
 
 import csv
 import io
+import json
+
+from django.core.paginator import Paginator
+from django.core import serializers
 
 # 管理员测试器
 def user_is_admin(user):
@@ -24,7 +28,8 @@ def add_user_api(request):
             'password1': request.POST.get('password', 0),
             'password2': request.POST.get('password', 0),
             'email': request.POST.get('email', 0),
-            'user_role': request.POST.get('auth', 0)
+            'user_role': request.POST.get('auth', 0),
+            'name': request.POST.get('name', "")
             }
     f = AddUserForm(data)
 
@@ -72,19 +77,26 @@ def csv_phrase_api(request):
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
 def search_user_api(request):
-    if not upload.name.endswith('.csv'):
-        return JsonResponse({"success": False, "code": 400, "message":"非csv文件", "data":""})
-    if upload:
-        data_text = upload.read().decode("UTF-8")
-        io_string = io.StringIO(data_text)
-        reader = csv.reader(io_string, delimiter=',')
-        row = 0
-        data=[]
-        for r in reader:
-            data.append(r)
-            row += 1
-            if row > 9:
-                break
-        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":data})
+    kList = ['uid', 'name']
+
+    k = request.POST.get("searchMode", "")
+    kw = request.POST.get("keyword", "")
+    pN = request.POST.get("page", 1)
+    iPP = request.POST.get("itemPerPage", 25)
+    
+    if k and k in kList:
+        if k == 'uid':
+            qSet = User.objects.filter(uid__contains=kw).only().values_list('uid', 'name', 'email', 'role', 'is_active').order_by('uid')
+            p = Paginator(qSet, iPP)
+            # json_response = serializers.serialize('json', list(p.object_list))
+            d = json.dumps(list(p.object_list))
+        elif k == 'name':
+            qSet = User.objects.filter(name__contains=kw).only().values_list('uid', 'name', 'email', 'role', 'is_active').order_by('uid')
+            p = Paginator(qSet, iPP)
+            # json_response = serializers.serialize('json', list(p.object_list))
+            d = json.dumps(list(p.object_list))
+        else:
+            return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":json.loads(d)})
     else:
         return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})

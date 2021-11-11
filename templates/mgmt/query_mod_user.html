@@ -26,6 +26,8 @@
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
                     style="margin-top: 16px;" onclick="searchUser();">检索</div>
             </div>
+            <input id='page' name='page' value="1" hidden/>
+            <input name='itemPerPage' value="25" hidden/>
         </form>
     </div>
 
@@ -33,11 +35,16 @@
         <thead>
             <tr>
                 <td>UID</td>
-                <td>姓名</td>
+                <td>用户名</td>
                 <td>E-Mail</td>
+                <td>权限</td>
+                <td>状态</td>
                 <td>操作</td>
             </tr>
         </thead>
+        <tbody id="table-body">
+            
+        </tbody>
     </table>
 </div>
 {% endblock %}
@@ -58,14 +65,7 @@
             success: function (res) {
                 $("#progress-bar").prop("hidden", "hidden");
                 var message = "";
-                if (res.success) {
-                    message = res.message
-                } else {
-                    for (var key in res.message) {
-                        message = message + res.message[key] + "\n";
-                    }
-                }
-                mdui.snackbar({ message: message, position: 'top' });
+                mdui.snackbar({ message: res.message, position: 'top' });
                 if (res.success) {
                     drawTable(res.data);
                 }
@@ -76,5 +76,21 @@
             }
         });
     };
+    function drawTable(list) {
+        for(var i=0; i < list.length; i++){
+            var s = "<tr>";
+            var uid;
+            for(var j=0; j < list[i].length; j++){
+                if(j==0){
+                    uid = list[i][j];
+                }
+                s = s + "<td>" + list[i][j] + "</td>";
+            }
+            s = s + "<td><ul class='mdui-menu'><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li></ul></td>"
+            s = s + "</tr>";
+            $("#table-body").append(s);
+        }
+        mdui.mutation();
+    }
 </script>
 {% endblock %}

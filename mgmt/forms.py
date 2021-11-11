@@ -14,6 +14,8 @@ from django.contrib.auth import get_user_model
 class AddUserForm(UserCreationForm):
     username = forms.CharField(widget=widgets.TextInput(
         attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}', 'maxlength': 8}))
+    name = forms.CharField(widget=widgets.TextInput(
+        attrs={'class': 'mdui-textfield-input'}), required=False)
     password1 = forms.CharField(max_length=16, widget=widgets.PasswordInput(
         attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}))
     password2 = forms.CharField(max_length=16, widget=widgets.PasswordInput(
@@ -25,7 +27,7 @@ class AddUserForm(UserCreationForm):
     
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        fields = UserCreationForm.Meta.fields + ('email', 'user_role',)
+        fields = UserCreationForm.Meta.fields + ('email', 'user_role', 'name',)
 
     def clean_username(self):  
         username = self.cleaned_data['username'].lower()
