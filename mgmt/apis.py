@@ -5,11 +5,15 @@ from django.views.decorators.http import require_http_methods
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+from django.conf import settings
+
 from .forms import *
 
 import csv
 import io
 import json
+
+import re
 
 from django.core.paginator import Paginator
 from django.core import serializers
@@ -100,3 +104,43 @@ def search_user_api(request):
         return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":json.loads(d)})
     else:
         return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+
+
+# 操作用户API
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+def mod_user_api(request):
+    uid = request.POST.get("uid", "")
+    operation = request.POST.get("operation", "")
+
+    if not uid or not operation:
+        return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+    
+    try:
+        user = User.object.get(uid=uid)
+    except:
+        return JsonResponse({"success": False, "code": 400, "message":"用户不存在", "data":""})
+    
+    if operation == "changePassword":
+        pswd = request.POST.get("password", "")
+        if re.match(settings.USER_PSWD_PATTERN, pswd):
+            user.set_password(pswd)
+            return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
+        else:
+            return JsonResponse({"success": False, "code": 400, "message":"密码不符合格式", "data":""})
+    elif operation == "changeEmail":
+        email = request.POST.get("email", "")
+        if email:
+            user.email = email
+            user.save()
+            return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
+    elif operation == "setActive":
+        active = request.POST.get("active", False)
+        user.is_active = bool(active)
+        user.save()
+        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
+    else:
+        return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+        
+

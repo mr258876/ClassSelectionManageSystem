@@ -26,24 +26,24 @@
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
                     style="margin-top: 16px;" onclick="searchUser();">检索</div>
             </div>
-            <input id='page' name='page' value="1" hidden/>
-            <input name='itemPerPage' value="25" hidden/>
+            <input id='page' name='page' value="1" hidden />
+            <input name='itemPerPage' value="25" hidden />
         </form>
     </div>
 
-    <table class="mdui-table">
+    <table class="mdui-table mdui-table-hoverable">
         <thead>
             <tr>
                 <td>UID</td>
                 <td>用户名</td>
                 <td>E-Mail</td>
                 <td>权限</td>
-                <td>状态</td>
+                <td>是否启用</td>
                 <td>操作</td>
             </tr>
         </thead>
         <tbody id="table-body">
-            
+
         </tbody>
     </table>
 </div>
@@ -77,20 +77,25 @@
         });
     };
     function drawTable(list) {
-        for(var i=0; i < list.length; i++){
+        $("#table-body").empty()
+        $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable")
+        for (var i = 0; i < list.length; i++) {
             var s = "<tr>";
             var uid;
-            for(var j=0; j < list[i].length; j++){
-                if(j==0){
+            for (var j = 0; j < list[i].length; j++) {
+                if (j == 0) {
                     uid = list[i][j];
                 }
                 s = s + "<td>" + list[i][j] + "</td>";
             }
-            s = s + "<td><ul class='mdui-menu'><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li></ul></td>"
+            s = s + "<td><button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button><ul class='mdui-menu' id='menu" + uid + "'><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li><li class='mdui-menu-item'><a href='javascript:;' class='mdui-ripple'>Refresh</a></li></ul></td>"
             s = s + "</tr>";
             $("#table-body").append(s);
         }
         mdui.mutation();
+    }
+    function modUser(uid, operation) {
+        
     }
 </script>
 {% endblock %}

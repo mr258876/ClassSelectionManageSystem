@@ -13,5 +13,6 @@ urlpatterns = [
     path('apis/add_user', apis.add_user_api, name='add_user_api'),
     path('apis/import_user', apis.import_user_api, name='import_user_api'),
     path('apis/csv_phrase', apis.csv_phrase_api, name='csv_phrase_api'),
-    path('apis/search_user_api', apis.search_user_api, name='search_user_api')
+    path('apis/search_user_api', apis.search_user_api, name='search_user_api'),
+    path('apis/mod_user_api', apis.mod_user_api, name='mod_user_api')
 ]

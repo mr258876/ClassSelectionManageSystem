@@ -131,9 +131,21 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+
+# Session Settings
+# https://docs.djangoproject.com/zh-hans/3.2/topics/http/sessions/
+
+SESSION_COOKIE_AGE = 900
+
+
 # Customized User Model
 # https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#auth-custom-user
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'course'
 # LOGOUT_REDIRECT_URL = '/ProjectMIS307v2'
+
+
+# User Name&Password Pattern
+USER_NAME_PATTERN = '(^[0138])[0-9]{1,7}'
+USER_PSWD_PATTERN = '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$'

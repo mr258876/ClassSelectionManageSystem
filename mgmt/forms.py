@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 
+from django.conf import settings
+
 
 ###############################################################
 # APIs
@@ -13,13 +15,13 @@ from django.contrib.auth import get_user_model
 # 用户注册表单
 class AddUserForm(UserCreationForm):
     username = forms.CharField(widget=widgets.TextInput(
-        attrs={'class': 'mdui-textfield-input', 'pattern': '(^[0138])[0-9]{1,7}', 'maxlength': 8}))
+        attrs={'class': 'mdui-textfield-input', 'pattern': settings.USER_NAME_PATTERN, 'maxlength': 8}))
     name = forms.CharField(widget=widgets.TextInput(
         attrs={'class': 'mdui-textfield-input'}), required=False)
     password1 = forms.CharField(max_length=16, widget=widgets.PasswordInput(
-        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}))
+        attrs={'class': 'mdui-textfield-input', 'pattern': settings.USER_PSWD_PATTERN, 'maxlength': 16}))
     password2 = forms.CharField(max_length=16, widget=widgets.PasswordInput(
-        attrs={'class': 'mdui-textfield-input', 'pattern': '^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$', 'maxlength': 16}))
+        attrs={'class': 'mdui-textfield-input', 'pattern': settings.USER_PSWD_PATTERN, 'maxlength': 16}))
     email = forms.CharField(widget=widgets.EmailInput(
         attrs={'class': 'mdui-textfield-input'}))
     user_role = forms.CharField(widget=widgets.TextInput(

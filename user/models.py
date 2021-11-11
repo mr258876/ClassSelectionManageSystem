@@ -13,6 +13,10 @@ class UserManager(BaseUserManager):
         if not uid:
             raise ValueError('Users must have an uid')
 
+        # 自动权限分配：
+        # 1-学生
+        # 3-教师
+        # 8-院系
         if not user_role or user_role == 'auto':
             if uid[0] == '1' or uid[0] == '2':
                 user_role = 'student'
@@ -125,4 +129,4 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
     birthday = models.DateField(null=True, verbose_name="生日")
     department_no = models.CharField(max_length=3, verbose_name="院系号")
-    info = models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介')
+    info = models.CharField(help_text='不要超过250字', null=True, max_length=255, verbose_name='教师简介')
