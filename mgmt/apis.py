@@ -2,6 +2,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, reverse, redirect
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 
@@ -22,11 +23,19 @@ from django.core import serializers
 def user_is_admin(user):
     return user.is_superuser
 
+# 院系权限测试器
+def user_is_dept(user):
+    return user.role == 'dept'
+
+
+#######################################
+# 用户API
 
 # 添加用户API
 @login_required
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
+@ensure_csrf_cookie
 def add_user_api(request):
     data = {'username': request.POST.get('username', 0),
             'password1': request.POST.get('password', 0),
@@ -48,6 +57,7 @@ def add_user_api(request):
 @login_required
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
+@ensure_csrf_cookie
 def import_user_api(request):
     return render(request, "mgmt/add_import_user.html")
 
@@ -80,6 +90,7 @@ def csv_phrase_api(request):
 @login_required
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
+@ensure_csrf_cookie
 def search_user_api(request):
     kList = ['uid', 'name']
 
@@ -110,6 +121,7 @@ def search_user_api(request):
 @login_required
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
+@ensure_csrf_cookie
 def mod_user_api(request):
     uid = request.POST.get("uid", "")
     operation = request.POST.get("operation", "")
@@ -118,7 +130,7 @@ def mod_user_api(request):
         return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
     
     try:
-        user = User.object.get(uid=uid)
+        user = User.objects.get(uid=uid)
     except:
         return JsonResponse({"success": False, "code": 400, "message":"用户不存在", "data":""})
     
@@ -137,10 +149,52 @@ def mod_user_api(request):
             return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
     elif operation == "setActive":
         active = request.POST.get("active", False)
-        user.is_active = bool(active)
+        if active == "true":
+            user.is_active = True
+        else:
+            user.is_active = False
         user.save()
         return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
     else:
         return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
         
 
+#######################################
+# 院系API
+
+# 新建院系
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def add_dept_api(request):
+    k = request.POST.get("", "")
+
+    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+
+
+# 修改院系信息
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def mod_dept_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+
+
+# 查询院系
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def search_dept_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+
+
+# 审批开课申请
+@login_required
+@user_passes_test(user_is_dept)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def dept_link_user_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})

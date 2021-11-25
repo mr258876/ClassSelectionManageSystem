@@ -8,7 +8,7 @@
         <div class="mdui-row">
             <div class="main-header mdui-typo">
                 <div class="mdui-col-xs-12">
-                    <h1 id="add">检索用户</h1>
+                    <h1 id="add">检索院系</h1>
                 </div>
             </div>
         </div>
@@ -17,8 +17,8 @@
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
                 <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
-                    <option value="uid" selected>UID</option>
-                    <option value="name">姓名</option>
+                    <option value="deptid" selected>院系编号</option>
+                    <option value="deptname">院系名称</option>
                 </select>
                 <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
                     <input class="mdui-textfield-input" type="text" name='keyword' />
@@ -34,11 +34,9 @@
     <table class="mdui-table mdui-table-hoverable">
         <thead>
             <tr>
-                <td>UID</td>
-                <td>用户名</td>
-                <td>E-Mail</td>
-                <td>权限</td>
-                <td>是否启用</td>
+                <td>院系编号</td>
+                <td>院系名称</td>
+                <td>操作用户</td>
                 <td>操作</td>
             </tr>
         </thead>

@@ -1,0 +1,82 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-增添院系{% endblock %}
+{% block nav-title %}系统管理{% endblock %}
+
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="add">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">增添院系</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-user-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.username %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe80c;</i>
+                    <label class="mdui-textfield-label">Department Id</label>
+                    <input class="mdui-textfield-input" type="text" Iattern='(^[0138])[0-9]{1,7}' name='deptID' />
+                    <div class="mdui-textfield-helper">院系编号</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.username %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe84f;</i>
+                    <label class="mdui-textfield-label">Department Name</label>
+                    <input class="mdui-textfield-input" type="text" name='deptName' />
+                    <div class="mdui-textfield-helper">院系名称</div>
+                </div>
+            </div>
+
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12">
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addDept();">添加院系
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<script>
+    function addDept() {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: "{% url 'add_dept_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#add-user-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    message = res.message
+                } else {
+                    for (var key in res.message) {
+                        message = message + key + res.message[key] + "\n";
+                    }
+                }
+                mdui.snackbar({ message: message, position: 'top' });
+                if (res.success) {
+                    drawTable(res.data);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    };
+</script>
+{% endblock %}

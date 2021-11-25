@@ -23,11 +23,15 @@ def mgmt_home(request):
 @login_required
 @user_passes_test(user_is_admin)
 def switch_operation(request, operation):
-    operations = ['add_user', 'import_user',
-                  'mod_user', 'set_selection_schedule']
+    operations = ['add_user', 'mod_user', 
+                    'add_dept', 'mod_dept',
+                    'set_selection_schedule']
     if operation in operations:
         return eval(operation)(request)
 
+
+#######################################
+# 用户管理
 
 # 增添用户
 @login_required
@@ -43,8 +47,28 @@ def mod_user(request):
     return render(request, "mgmt/query_mod_user.html")
 
 
+#######################################
+# 系统管理
+
 # 设置选课时间
 @login_required
 @user_passes_test(user_is_admin)
 def set_selection_schedule(request):
     pass
+
+
+#######################################
+# 院系管理
+
+# 新建院系
+@login_required
+@user_passes_test(user_is_admin)
+def add_dept(request):
+    return render(request, "mgmt/add_dept.html")
+
+
+# 修改院系
+@login_required
+@user_passes_test(user_is_admin)
+def mod_dept(request):
+    return render(request, "mgmt/query_mod_dept.html")

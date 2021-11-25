@@ -10,7 +10,16 @@
         </li>
         <li class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b6;</i>
-            <a href="{% url 'mod_user' %}" class="mdui-list-item-content">检索用户</a>
+            <a href="{% url 'mod_user' %}" class="mdui-list-item-content">检索/操作用户</a>
+        </li>
+        <li class="mdui-subheader">院系管理</li>
+        <li class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe145;</i>
+            <a href="{% url 'add_dept' %}" class="mdui-list-item-content">增添院系</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b6;</i>
+            <a href="{% url 'mod_dept' %}" class="mdui-list-item-content">检索/操作院系</a>
         </li>
         <li class="mdui-subheader">计划任务</li>
         <li class="mdui-list-item mdui-ripple">
@@ -28,7 +37,7 @@
 
 {% block nav-bar %}
 <div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar">
-    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>搜索课程</label>
     </a>
