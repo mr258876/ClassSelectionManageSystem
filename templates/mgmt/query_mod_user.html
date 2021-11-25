@@ -1,0 +1,160 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-检索用户{% endblock %}
+{% block nav-title %}系统管理{% endblock %}
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="search-user">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">检索用户</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-user-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
+                <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
+                    <option value="uid" selected>UID</option>
+                    <option value="name">姓名</option>
+                </select>
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
+                    <input class="mdui-textfield-input" type="text" name='keyword' />
+                </div>
+                <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
+                    style="margin-top: 16px;" onclick="searchUser();">检索</div>
+            </div>
+            <input id='page' name='page' value="1" hidden />
+            <input name='itemPerPage' value="25" hidden />
+        </form>
+    </div>
+
+    <table class="mdui-table mdui-table-hoverable">
+        <thead>
+            <tr>
+                <td>UID</td>
+                <td>用户名</td>
+                <td>E-Mail</td>
+                <td>权限</td>
+                <td>是否启用</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+
+        </tbody>
+    </table>
+
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function searchUser(snack_bar = true) {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: "{% url 'search_user_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#add-user-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (snack_bar) {
+                    mdui.snackbar({ message: res.message, position: 'top' });
+                }
+                if (res.success) {
+                    drawTable(res.data);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "查询失败", position: 'top' });
+            }
+        });
+    };
+
+    function drawTable(list) {
+        $("#table-body").empty();
+        $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable")
+        for (var i = 0; i < list.length; i++) {
+            var s = "<tr>";
+            var uid;
+            for (var j = 0; j < list[i].length; j++) {
+                if (j == 0) {
+                    uid = list[i][j];
+                }
+                s = s + "<td>" + list[i][j] + "</td>";
+            }
+            s = s + "<td>";
+            s = s + "<button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button>";
+            s = s + "<ul class='mdui-menu' id='menu" + uid + "'>";
+            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改邮箱</a></li>";
+            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改密码</a></li>";
+            s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", true)' class='mdui-ripple'>启用</a></li>";
+            s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", false)' class='mdui-ripple'>禁用</a></li>";
+            s = s + "</ul></td>";
+            s = s + "</tr>";
+            $("#table-body").append(s);
+        }
+        mdui.mutation();
+    }
+
+    function setUserActive(uid, is_active) {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        f.append("uid", uid);
+        f.append("operation", "setActive");
+        f.append("active", is_active);
+        $.ajax({
+            url: "{% url 'mod_user_api' %}",
+            type: 'POST',
+            cache: false,
+            data: f,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: res.message, position: 'top' });
+                if (res.success) {
+                    searchUser(false);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "更改用户状态失败", position: 'top' });
+            }
+        });
+    }
+
+    function modUser(uid, operation) {
+
+    }
+</script>
+{% endblock %}

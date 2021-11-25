@@ -2,10 +2,9 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, reverse, redirect
 from django.db.models import Q
 
-from constants import INVALID_KIND, INVALID_REQUEST_METHOD, ILLEGAL_KIND
+from constants import INVALID_REQUEST_METHOD, ILLEGAL_KIND
 from course.forms import CourseForm, ScheduleForm
 from course.models import Course, StudentCourse, Schedule
-from user.util import getRoleObject
 
 from django.utils import timezone
 
@@ -26,6 +25,8 @@ def home(request, role):
         return teacher_home(request)
     elif role == "student":
         return student_home(request)
+    else:
+        return redirect(reverse('mgmt_home'))
 
 
 def teacher_home(request):

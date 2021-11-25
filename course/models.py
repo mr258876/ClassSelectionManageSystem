@@ -1,12 +1,20 @@
 from django.db import models
 import datetime
-from user.models import Student, Teacher
+from user.models import Student, Teacher, User
 from constants import COURSE_STATUS, COURSE_OPERATION
+from django.db.models.deletion import SET_NULL
 
 
 def current_year():
     # refer: https://stackoverflow.com/questions/49051017/year-field-in-django/49051348
     return datetime.date.today().year
+
+
+# 院系
+class Department(models.Model):
+    dept_name = models.CharField(max_length=32, null=False, verbose_name="院系名称")
+    dept_no = models.CharField(max_length=4, verbose_name="院系编号", primary_key=True)
+    dept_user = models.OneToOneField(User, null=True, verbose_name="院系对应操作用户", on_delete=SET_NULL)
 
 
 # 课程

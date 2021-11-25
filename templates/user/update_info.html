@@ -57,7 +57,7 @@
                 <label class="mdui-textfield-helper">您的出生日期</label>
                 {{form.birthday}}
             </div>
-            {% if role == 'teacher' %}
+            {% if user.role == 'teacher' %}
             <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                 <i class="mdui-icon material-icons">&#xe24e;</i>
                 <label class="mdui-textfield-label">Info</label>
@@ -81,4 +81,15 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block script %}
+{% if form.errors %}
+<script>
+mdui.snackbar({
+    message: '{{form.errors}}',
+    position: 'top'
+  });
+</script>
+{% endif %}
 {% endblock %}

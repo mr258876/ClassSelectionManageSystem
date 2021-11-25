@@ -9,11 +9,15 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 
 # 用户类管理器
 class UserManager(BaseUserManager):
-    def _create_user(self, uid, password=None, email=None, user_role=None):
+    def _create_user(self, uid, password=None, email=None, user_role=None, name=None):
         if not uid:
             raise ValueError('Users must have an uid')
 
-        if not user_role:
+        # 自动权限分配：
+        # 1-学生
+        # 3-教师
+        # 8-院系
+        if not user_role or user_role == 'auto':
             if uid[0] == '1' or uid[0] == '2':
                 user_role = 'student'
             elif uid[0] == '3':
@@ -30,8 +34,8 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
-        if user_role == 'admin':
-            user.is_admin = True
+        if user.role=="admin":
+            user.is_superuser = True
         user.save(using=self._db)
 
         # Attach Role Object
@@ -43,14 +47,22 @@ class UserManager(BaseUserManager):
             roleObject = Teacher(user=user)
             roleObject.save()
             user.teacher = roleObject
+        else:
+            # 院系、管理员不需要更新信息
+            user.need_complete_info = False
+        
+        if name:
+            user.name = name
+        
+        user.save(using=self._db)
 
         return user
     
-    def create_user(self, uid, password=None, email=None, user_role=None):
-        return self._create_user(uid, password, email, user_role)
+    def create_user(self, uid, password=None, email=None, user_role=None, name=None):
+        return self._create_user(uid, password, email, user_role, name)
     
-    def create_superuser(self, uid, password, email=None, user_role=None):
-        return self._create_user(uid, password, email, user_role='admin')
+    def create_superuser(self, uid, password, email=None, user_role=None, name=None):
+        return self._create_user(uid, password, email, user_role='admin', name=name)
 
 
 # 继承AbstractBaseUser以及PermissionsMixin以利用django自带用户登录以及权限管理
@@ -73,6 +85,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")
     need_complete_info = models.BooleanField(default=True, verbose_name="是否需要更新个人信息")
     REQUIRED_FIELD = ["role", "need_complete_info"]
+
+    name = models.CharField(max_length=50, null=True, verbose_name="用户名")
 
     is_active = models.BooleanField(default=True, verbose_name="用户状态")
     is_superuser = models.BooleanField(default=False, verbose_name="是否为管理员")
@@ -115,4 +129,4 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=1, choices=genders, verbose_name="性别")
     birthday = models.DateField(null=True, verbose_name="生日")
     department_no = models.CharField(max_length=3, verbose_name="院系号")
-    info = models.CharField(help_text='不要超过250字', max_length=255, verbose_name='教师简介')
+    info = models.CharField(help_text='不要超过250字', null=True, max_length=255, verbose_name='教师简介')
