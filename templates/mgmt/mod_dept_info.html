@@ -92,11 +92,11 @@
                 $("#progress-bar").prop("hidden", "hidden");
                 var message = "";
                 if (res.success) {
-                    $("#dept_name").html(res.data[0][1]);
-                    $("#input_deptId").val(res.data[0][0]);
-                    $("#hidden_deptId").val(res.data[0][0]);
-                    $("#input_deptName").val(res.data[0][1]);
-                    $("#input_deptUser").val(res.data[0][2]);
+                    $("#dept_name").html(res.data.dept[0][1]);
+                    $("#input_deptId").val(res.data.dept[0][0]);
+                    $("#hidden_deptId").val(res.data.dept[0][0]);
+                    $("#input_deptName").val(res.data.dept[0][1]);
+                    $("#input_deptUser").val(res.data.dept[0][2]);
                     mdui.mutation();
                 } else {
                     mdui.snackbar({ message: "查询失败", position: 'top' });

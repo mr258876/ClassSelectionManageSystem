@@ -79,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     uid = models.CharField(max_length=8, primary_key=True)
     USERNAME_FIELD = 'uid'
 
-    email = models.EmailField(max_length=32, verbose_name="邮箱")
+    email = models.EmailField(max_length=64, verbose_name="邮箱")
     EMAIL_FIELD = 'email'
 
     role = models.CharField(max_length=7, choices=roles, null=False, verbose_name="角色")

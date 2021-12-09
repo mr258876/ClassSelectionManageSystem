@@ -58,6 +58,17 @@
         </p>
     </div>
 
+    <div class="mdui-dialog" id="input-dialog">
+        <div class="mdui-dialog-title" id="input-dialog-title"></div>
+        <div class="mdui-dialog-content mdui-textfield">
+            <input class="mdui-textfield-input" id='input-dialog-input'/>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>cancel</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>erase</button>
+          </div>
+
+    </div>
 
 </div>
 {% endblock %}
@@ -128,8 +139,8 @@
             s = s + "<td>";
             s = s + "<button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button>";
             s = s + "<ul class='mdui-menu' id='menu" + uid + "'>";
-            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改邮箱</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改密码</a></li>";
+            s = s + "<li class='mdui-menu-item'><a onclick='modUser(" + uid + ", 0);' class='mdui-ripple'>修改邮箱</a></li>";
+            s = s + "<li class='mdui-menu-item'><a onclick='modUser(" + uid + ", 1);' class='mdui-ripple'>修改密码</a></li>";
             s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", true)' class='mdui-ripple'>启用</a></li>";
             s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", false)' class='mdui-ripple'>禁用</a></li>";
             s = s + "</ul></td>";
@@ -140,11 +151,11 @@
     }
 
     function drawPList(list, current) {
-        $("#page-count").html("第" + current + "页，共" + list[list.length-1] + "页");
+        $("#page-count").html("第" + current + "页，共" + list[list.length - 1] + "页");
         $("#page-selector").empty();
         for (var i = 0; i < list.length; i++) {
             var s = "<div class='mdui-btn ";
-            if (current == list[i]){
+            if (current == list[i]) {
                 s = s + "mdui-color-theme-accent ";
             }
             s = s + "' onclick='searchUser(page=" + list[i] + ");'>" + list[i] + "</div>";
@@ -183,7 +194,9 @@
     }
 
     function modUser(uid, operation) {
-
+        $("#input-dialog-title").html("为" + uid + "设置" + operation==1?"新密码":"新邮箱");
+        var diag = new mdui.Dialog('#input-dialog');
+        diag.open();
     }
 </script>
 {% endblock %}

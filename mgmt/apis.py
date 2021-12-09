@@ -190,6 +190,8 @@ def add_dept_api(request):
     user_set = User.objects.filter(uid=d_user)
     if len(dept_set) == 0:
         return JsonResponse({"success": False, "code": 400, "message":"用户id不存在", "data":""})
+    if user_set[0].role != 'dept':
+        return JsonResponse({"success": False, "code": 400, "message":"用户权限错误", "data":""})
 
     try:
         dept = Department(dept_no=d_no, dept_name=d_name, dept_user=user_set[0])
@@ -216,6 +218,8 @@ def mod_dept_api(request):
     user_set = User.objects.filter(uid=d_user)
     if len(dept_set) == 0:
         return JsonResponse({"success": False, "code": 400, "message":"用户id不存在", "data":""})
+    if user_set[0].role != 'dept':
+        return JsonResponse({"success": False, "code": 400, "message":"用户权限错误", "data":""})
 
     try:
         dept = dept_set[0]

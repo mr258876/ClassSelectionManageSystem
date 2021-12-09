@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .forms import AddUserForm
 
+# 用户具有管理权限
+def user_mgmtable(user):
+    return user.role == 'dept' or user.is_superuser
+
 # 管理员测试器
 def user_is_admin(user):
     return user.is_superuser
@@ -14,14 +18,19 @@ def user_is_admin(user):
 
 # 主页
 @login_required
-@user_passes_test(user_is_admin)
+@user_passes_test(user_mgmtable)
 def mgmt_home(request):
-    return redirect(reverse("add_user"))
+    if request.user.is_superuser:
+        return redirect(reverse("add_user"))
+    elif hasattr(request.user, 'department'):
+        return render(request, "mgmt/mod_dept_info.html", {'dept_no': request.user.department})
+    else:
+        return render(request, "info.html", {'title': '权限错误', 'info': '您没有操作任何院系的权限，请联系管理员', 'next': 'logout'})
 
 
 # 操作跳转
 @login_required
-@user_passes_test(user_is_admin)
+@user_passes_test(user_mgmtable)
 def switch_operation(request, operation):
     operations = ['add_user', 'mod_user', 
                     'add_dept', 'mod_dept',
