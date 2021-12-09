@@ -10,6 +10,7 @@ urlpatterns = [
     path('mod_user/', views.mod_user, name="mod_user"),
     path('add_dept/', views.add_dept, name="add_dept"),
     path('mod_dept/', views.mod_dept, name="mod_dept"),
+    path('mod_dept/<slug:dept_no>', views.mod_dept_info, name="mod_dept_info"),
     path('set_selection_schedule/', views.set_selection_schedule, name="set_selection_schedule"),
     
     path('apis/add_user', apis.add_user_api, name='add_user_api'),
@@ -19,5 +20,5 @@ urlpatterns = [
     path('apis/mod_user_api', apis.mod_user_api, name='mod_user_api'),
     path('apis/add_dept_api', apis.add_dept_api, name='add_dept_api'),
     path('apis/mod_dept_api', apis.mod_dept_api, name='mod_dept_api'),
-    path('apis/search_dept_api', apis.search_dept_api, name='searh_dept_api'),
+    path('apis/search_dept_api', apis.search_dept_api, name='search_dept_api'),
 ]

@@ -1,8 +1,9 @@
 from django.db import models
 import datetime
 from user.models import Student, Teacher, User
+from mgmt.models import Semester
 from constants import COURSE_STATUS, COURSE_OPERATION
-from django.db.models.deletion import SET_NULL
+from django.db.models.deletion import SET_NULL, CASCADE
 
 
 def current_year():
@@ -19,86 +20,41 @@ class Department(models.Model):
 
 # 课程
 class Course(models.Model):
-    credits = [
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-    ]
-    semesters = [
-        ("Autumn", "上"),
-        ("Spring", "下")
-    ]
+    id = models.CharField(max_length=6, primary_key=True, verbose_name='课程编码')
     name = models.CharField(max_length=50, verbose_name="课程名")
     introduction = models.CharField(max_length=250, verbose_name="介绍")
     credit = models.IntegerField(verbose_name="学分")
-    max_number = models.IntegerField(verbose_name="课程最大人数")
-
-    year = models.IntegerField(verbose_name="年份", default=current_year)
-    semester = models.CharField(max_length=20, verbose_name="学期", choices=semesters)
-
-    # 未开始选课， 1
-    # 开始选课，未结束选课 2
-    # 结束选课， 3
-    # 结课 4
-    # 已打完分 5
-    status = models.IntegerField(verbose_name="课程状态", default=1)
-
-    teacher = models.ForeignKey(Teacher, verbose_name="课程教师", on_delete=models.CASCADE)
-
-    def get_status_text(self):
-        return COURSE_STATUS[self.status]
-
-    def get_op_text(self):
-        return COURSE_OPERATION[self.status]
-
-    def get_current_count(self):
-        courses = StudentCourse.objects.filter(course=self, with_draw=False)
-        return len(courses)
-
-    def get_schedules(self):
-        schedules = Schedule.objects.filter(course=self)
-        return schedules
+    description = models.CharField(max_length=127, verbose_name='课程描述')
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.teacher.name)
 
 
 def weekday_choices():
-    weekday_str = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    weekday_str = ['MON', 'TUE', 'WEN', 'THU', 'FRI', 'SAT', 'SUN']
     return [(i+1, weekday_str[i]) for i in range(7)]
-
+    
 
 # 课程表
 class Schedule(models.Model):
-    weekday = models.IntegerField(choices=weekday_choices(), verbose_name="日期")
+    weekday = models.IntegerField(choices=weekday_choices(), verbose_name="星期？")
     start_time = models.TimeField(verbose_name="上课时间")
     end_time = models.TimeField(verbose_name="下课时间")
     location = models.CharField(max_length=100, verbose_name="上课地点")
-    remarks = models.CharField(max_length=100, verbose_name="备注", null=True, blank = True)
-
-    start_week = models.IntegerField(verbose_name="第几周开始")
-    end_week = models.IntegerField(verbose_name="第几周结束")
 
     intervals = [
-        (1, "无间隔"),
-        (2, "每隔一周上一次")
+        (0, '每周'),
+        (1, '单周'),
+        (2, '双周')
     ]
     week_interval = models.IntegerField(verbose_name="周间隔", choices=intervals, default=1)
 
-    course = models.ForeignKey(Course, verbose_name="课程名", on_delete=models.CASCADE)
 
-    def __str__(self):
-        s = "第%s周-第%s周 " % (self.start_week, self.end_week)
-        if self.week_interval == 2:
-            s += "隔一周 "
-        s += "%s %s-%s " % (self.get_weekday_display(), self.start_time.strftime("%H:%M"),
-                            self.end_time.strftime("%H:%M"))
-        s += "在%s" % self.location
-        if self.remarks:
-            s += " %s" % self.remarks
-        return s
+# 课程班级
+class Class(models.Model):
+    course = models.ForeignKey(Course, on_delete=CASCADE, verbose_name='课程')
+    teacher = models.ForeignKey(Teacher, on_delete=CASCADE, verbose_name='教师')
+    schedule = models.ForeignKey(Schedule, on_delete=CASCADE, verbose_name='上课时间')
 
 
 # 学生评分
@@ -123,3 +79,33 @@ class StudentCourse(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+
+# 开课申请
+class OpenCourseApplication(models.Model):
+    status = [
+        ('N','待审核'),
+        ('P','通过'),
+        ('F','不通过'),
+    ]
+
+    teacher = models.ManyToManyField(Teacher, verbose_name='教师')
+    course = models.ManyToManyField(Course, verbose_name='课程')
+    description = models.CharField(null=False, max_length=127, verbose_name= '开课描述')
+    result = models.CharField(null=False, choices=status, max_length=1, default='N', verbose_name='审核状态')
+
+
+# 学生课程信息
+class StudentCourseInfo(models.Model):
+    student = models.ManyToManyField(Student, verbose_name='学生')
+    course = models.ManyToManyField(Course, verbose_name='课程')
+    semester = models.ManyToManyField(Semester, verbose_name='学期')
+    grade = models.PositiveIntegerField(null=True, verbose_name='成绩')
+
+
+# 课程剩余名额
+# 若某课程某学期不开课则无此对象
+class CourseSelectInfo(models.Model):
+    course = models.ManyToManyField(Course, verbose_name='课程')
+    semester = models.ManyToManyField(Semester, verbose_name='学期')
+    num_remain = models.PositiveSmallIntegerField(default=0, null=False, verbose_name='剩余名额')

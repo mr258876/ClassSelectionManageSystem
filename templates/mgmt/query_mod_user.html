@@ -12,7 +12,7 @@
                 </div>
             </div>
         </div>
-        <form id="add-user-form">
+        <form id="search-user-form">
             {% csrf_token %}
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
@@ -47,6 +47,17 @@
         </tbody>
     </table>
 
+    </br>
+
+    <div class="mdui-typo ">
+        <p class="mdui-row-md-9" id="page-selector">
+
+        </p>
+        <p id="page-count">
+
+        </p>
+    </div>
+
 
 </div>
 {% endblock %}
@@ -55,6 +66,8 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 
 <script>
+    $(document).ready(searchUser());
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -71,13 +84,14 @@
         return cookieValue;
     }
 
-    function searchUser(snack_bar = true) {
+    function searchUser(snack_bar = true, page = 1) {
         $("#progress-bar").removeAttr("hidden");
+        $('#page').val(page);
         $.ajax({
             url: "{% url 'search_user_api' %}",
             type: 'POST',
             cache: false,
-            data: new FormData($("#add-user-form")[0]),
+            data: new FormData($("#search-user-form")[0]),
             dataType: "json",
             processData: false,
             contentType: false,
@@ -88,7 +102,8 @@
                     mdui.snackbar({ message: res.message, position: 'top' });
                 }
                 if (res.success) {
-                    drawTable(res.data);
+                    drawTable(res.data.users);
+                    drawPList(res.data.plist, res.data.page);
                 }
             },
             error: function (res) {
@@ -120,6 +135,20 @@
             s = s + "</ul></td>";
             s = s + "</tr>";
             $("#table-body").append(s);
+        }
+        mdui.mutation();
+    }
+
+    function drawPList(list, current) {
+        $("#page-count").html("第" + current + "页，共" + list[list.length-1] + "页");
+        $("#page-selector").empty();
+        for (var i = 0; i < list.length; i++) {
+            var s = "<div class='mdui-btn ";
+            if (current == list[i]){
+                s = s + "mdui-color-theme-accent ";
+            }
+            s = s + "' onclick='searchUser(page=" + list[i] + ");'>" + list[i] + "</div>";
+            $("#page-selector").append(s);
         }
         mdui.mutation();
     }

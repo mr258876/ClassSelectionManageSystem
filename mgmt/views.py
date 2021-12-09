@@ -72,3 +72,10 @@ def add_dept(request):
 @user_passes_test(user_is_admin)
 def mod_dept(request):
     return render(request, "mgmt/query_mod_dept.html")
+
+
+# 修改院系具体信息
+@login_required
+@user_passes_test(user_is_admin)
+def mod_dept_info(request, dept_no):
+    return render(request, "mgmt/mod_dept_info.html", {'dept_no': dept_no})
