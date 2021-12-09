@@ -1,5 +1,5 @@
 {% extends "mgmt/mgmt.html" %}
-{% block title %}选课系统-检索用户{% endblock %}
+{% block title %}选课系统-检索院系{% endblock %}
 {% block nav-title %}系统管理{% endblock %}
 
 {% block content %}
@@ -12,19 +12,19 @@
                 </div>
             </div>
         </div>
-        <form id="add-user-form">
+        <form id="search-dept-form">
             {% csrf_token %}
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
                 <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
-                    <option value="deptid" selected>院系编号</option>
-                    <option value="deptname">院系名称</option>
+                    <option value="deptId" selected>院系编号</option>
+                    <option value="deptName">院系名称</option>
                 </select>
                 <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
                     <input class="mdui-textfield-input" type="text" name='keyword' />
                 </div>
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
-                    style="margin-top: 16px;" onclick="searchUser();">检索</div>
+                    style="margin-top: 16px;" onclick="searchDept();">检索</div>
             </div>
             <input id='page' name='page' value="1" hidden />
             <input name='itemPerPage' value="25" hidden />
@@ -36,7 +36,7 @@
             <tr>
                 <td>院系编号</td>
                 <td>院系名称</td>
-                <td>操作用户</td>
+                <td>操作员</td>
                 <td>操作</td>
             </tr>
         </thead>
@@ -44,6 +44,17 @@
 
         </tbody>
     </table>
+
+    </br>
+
+    <div class="mdui-typo ">
+        <p class="mdui-row-md-9" id="page-selector">
+
+        </p>
+        <p id="page-count">
+
+        </p>
+    </div>
 
 
 </div>
@@ -53,6 +64,8 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 
 <script>
+    $(document).ready(searchDept());
+
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -69,13 +82,14 @@
         return cookieValue;
     }
 
-    function searchUser(snack_bar = true) {
+    function searchDept(snack_bar = true, page = 1) {
         $("#progress-bar").removeAttr("hidden");
+        $('#page').val(page);
         $.ajax({
-            url: "{% url 'search_user_api' %}",
+            url: "{% url 'search_dept_api' %}",
             type: 'POST',
             cache: false,
-            data: new FormData($("#add-user-form")[0]),
+            data: new FormData($("#search-dept-form")[0]),
             dataType: "json",
             processData: false,
             contentType: false,
@@ -86,7 +100,8 @@
                     mdui.snackbar({ message: res.message, position: 'top' });
                 }
                 if (res.success) {
-                    drawTable(res.data);
+                    drawTable(res.data.dept);
+                    drawPList(res.data.plist, res.data.page);
                 }
             },
             error: function (res) {
@@ -101,58 +116,33 @@
         $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable")
         for (var i = 0; i < list.length; i++) {
             var s = "<tr>";
-            var uid;
+            var dept_id;
             for (var j = 0; j < list[i].length; j++) {
                 if (j == 0) {
-                    uid = list[i][j];
+                    dept_id = list[i][j];
                 }
                 s = s + "<td>" + list[i][j] + "</td>";
             }
             s = s + "<td>";
-            s = s + "<button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button>";
-            s = s + "<ul class='mdui-menu' id='menu" + uid + "'>";
-            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改邮箱</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='javascript:;' class='mdui-ripple'>修改密码</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", true)' class='mdui-ripple'>启用</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='setUserActive(" + uid + ", false)' class='mdui-ripple'>禁用</a></li>";
-            s = s + "</ul></td>";
+            s = s + "<a class='mdui-btn mdui-color-theme-accent' href='" + dept_id + "' target='_blank'>编辑</button>";
             s = s + "</tr>";
             $("#table-body").append(s);
         }
         mdui.mutation();
     }
 
-    function setUserActive(uid, is_active) {
-        $("#progress-bar").removeAttr("hidden");
-        var f = new FormData();
-        f.append("uid", uid);
-        f.append("operation", "setActive");
-        f.append("active", is_active);
-        $.ajax({
-            url: "{% url 'mod_user_api' %}",
-            type: 'POST',
-            cache: false,
-            data: f,
-            dataType: "json",
-            processData: false,
-            contentType: false,
-            headers: { 'X-CSRFToken': getCookie('csrftoken') },
-            success: function (res) {
-                $("#progress-bar").prop("hidden", "hidden");
-                mdui.snackbar({ message: res.message, position: 'top' });
-                if (res.success) {
-                    searchUser(false);
-                }
-            },
-            error: function (res) {
-                $("#progress-bar").prop("hidden", "hidden");
-                mdui.snackbar({ message: "更改用户状态失败", position: 'top' });
+    function drawPList(list, current) {
+        $("#page-count").html("第" + current + "页，共" + list[list.length - 1] + "页");
+        $("#page-selector").empty();
+        for (var i = 0; i < list.length; i++) {
+            var s = "<div class='mdui-btn ";
+            if (current == list[i]) {
+                s = s + "mdui-color-theme-accent ";
             }
-        });
-    }
-
-    function modUser(uid, operation) {
-
+            s = s + "' onclick='searchUser(page=" + list[i] + ");'>" + list[i] + "</div>";
+            $("#page-selector").append(s);
+        }
+        mdui.mutation();
     }
 </script>
 {% endblock %}

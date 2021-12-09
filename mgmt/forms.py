@@ -10,7 +10,7 @@ from django.conf import settings
 
 
 ###############################################################
-# APIs
+# Forms
 
 # 用户注册表单
 class AddUserForm(UserCreationForm):

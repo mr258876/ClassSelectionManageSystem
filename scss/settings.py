@@ -24,7 +24,6 @@ SECRET_KEY = '%v$55*en-l(k+==)z170imxqswaasls0hheci6)!qkhxaiiiwk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -39,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'course',
-    'mgmt'
+    'mgmt',
 ]
 
 MIDDLEWARE = [
@@ -89,6 +88,8 @@ DATABASES = {
     },
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -127,8 +128,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = 'ProjectMIS307v2/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [ 
+    os.path.join(BASE_DIR, "static"), 
 ]
 
 

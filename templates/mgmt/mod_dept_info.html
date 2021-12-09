@@ -1,0 +1,134 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-修改院系{% endblock %}
+{% block nav-title %}修改院系{% endblock %}
+
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="add">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="dept_name"></h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-dept-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <div
+                    class="mdui-textfield mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe80c;</i>
+                    <label class="mdui-textfield-label">Department Id</label>
+                    <input class="mdui-textfield-input" type="text" id="input_deptId" disabled/>
+                    <input type="hidden" name='deptId' id="hidden_deptId"/>
+                    <div class="mdui-textfield-helper">院系编号</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe84f;</i>
+                    <label class="mdui-textfield-label">Department Name</label>
+                    <input class="mdui-textfield-input" type="text" name='deptName' id="input_deptName"/>
+                    <div class="mdui-textfield-helper">院系名称</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe853;</i>
+                    <label class="mdui-textfield-label">Attached User</label>
+                    <input class="mdui-textfield-input" type="text" name='deptUser' id="input_deptUser"/>
+                    <div class="mdui-textfield-helper">操作员</div>
+                </div>
+            </div>
+
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12">
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="modDept();">保存
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<script>
+    $(document).ready(getValue());
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function getValue() {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        f.append("searchMode", "deptId");
+        f.append("keyword", "{{ dept_no }}");
+
+        $.ajax({
+            url: "{% url 'search_dept_api' %}",
+            type: 'POST',
+            cache: false,
+            data: f,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    $("#dept_name").html(res.data[0][1]);
+                    $("#input_deptId").val(res.data[0][0]);
+                    $("#hidden_deptId").val(res.data[0][0]);
+                    $("#input_deptName").val(res.data[0][1]);
+                    $("#input_deptUser").val(res.data[0][2]);
+                    mdui.mutation();
+                } else {
+                    mdui.snackbar({ message: "查询失败", position: 'top' });
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "查询失败", position: 'top' });
+            }
+        });
+    }
+
+    function modDept() {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: "{% url 'mod_dept_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#add-dept-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                mdui.snackbar({ message: res.message, position: 'top' });
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    };
+</script>
+{% endblock %}

@@ -19,6 +19,9 @@ import re
 from django.core.paginator import Paginator
 from django.core import serializers
 
+from course.models import Department
+
+
 # 管理员测试器
 def user_is_admin(user):
     return user.is_superuser
@@ -105,14 +108,22 @@ def search_user_api(request):
             p = Paginator(qSet, iPP)
             # json_response = serializers.serialize('json', list(p.object_list))
             d = json.dumps(list(p.object_list))
+            d = json.loads(d)
+            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+            pl = json.dumps(list(plist))
+            pl = json.loads(pl)
         elif k == 'name':
             qSet = User.objects.filter(name__contains=kw).only().values_list('uid', 'name', 'email', 'role', 'is_active').order_by('uid')
             p = Paginator(qSet, iPP)
             # json_response = serializers.serialize('json', list(p.object_list))
             d = json.dumps(list(p.object_list))
+            d = json.loads(d)
+            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+            pl = json.dumps(list(plist))
+            pl = json.loads(pl)
         else:
             return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
-        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":json.loads(d)})
+        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":{'users':d, 'plist':pl, 'page':pN}})
     else:
         return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
 
@@ -168,9 +179,24 @@ def mod_user_api(request):
 @require_http_methods(['POST'])
 @ensure_csrf_cookie
 def add_dept_api(request):
-    k = request.POST.get("", "")
+    d_no = request.POST.get("deptId", "")
+    d_name = request.POST.get("deptName", "")
+    d_user = request.POST.get("deptUser", "")
 
-    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+    dept_set = Department.objects.filter(dept_no=d_no)
+    if len(dept_set) > 0:
+        return JsonResponse({"success": False, "code": 400, "message":"院系ID已存在", "data":""})
+    
+    user_set = User.objects.filter(uid=d_user)
+    if len(dept_set) == 0:
+        return JsonResponse({"success": False, "code": 400, "message":"用户id不存在", "data":""})
+
+    try:
+        dept = Department(dept_no=d_no, dept_name=d_name, dept_user=user_set[0])
+        dept.save()
+    except Exception as e:
+        return JsonResponse({"success": False, "code": 400, "message":"创建失败", "data":str(e)})
+    return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
 
 
 # 修改院系信息
@@ -179,7 +205,27 @@ def add_dept_api(request):
 @require_http_methods(['POST'])
 @ensure_csrf_cookie
 def mod_dept_api(request):
-    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+    d_no = request.POST.get("deptId", "")
+    d_name = request.POST.get("deptName", "")
+    d_user = request.POST.get("deptUser", "")
+
+    dept_set = Department.objects.filter(dept_no=d_no)
+    if len(dept_set) == 0:
+        return JsonResponse({"success": False, "code": 400, "message":"院系ID不存在", "data":""})
+    
+    user_set = User.objects.filter(uid=d_user)
+    if len(dept_set) == 0:
+        return JsonResponse({"success": False, "code": 400, "message":"用户id不存在", "data":""})
+
+    try:
+        dept = dept_set[0]
+        dept.dept_no = d_no
+        dept.dept_name = d_name
+        dept.dept_user = user_set[0]
+        dept.save()
+    except Exception as e:
+        return JsonResponse({"success": False, "code": 400, "message":"创建失败", "data":str(e)})
+    return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":""})
 
 
 # 查询院系
@@ -188,8 +234,41 @@ def mod_dept_api(request):
 @require_http_methods(['POST'])
 @ensure_csrf_cookie
 def search_dept_api(request):
-    return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+    kList = ['deptId', 'deptName']
 
+    k = request.POST.get("searchMode", "")
+    kw = request.POST.get("keyword", "")
+    pN = request.POST.get("page", 1)
+    iPP = request.POST.get("itemPerPage", 25)
+    
+    if k and k in kList:
+        if k == 'deptId':
+            qSet = Department.objects.filter(dept_no__contains=kw).only().values_list('dept_no', 'dept_name', 'dept_user').order_by('dept_no')
+            p = Paginator(qSet, iPP)
+            # json_response = serializers.serialize('json', list(p.object_list))
+            d = json.dumps(list(p.object_list))
+            d = json.loads(d)
+            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+            pl = json.dumps(list(plist))
+            pl = json.loads(pl)
+        elif k == 'deptName':
+            qSet = Department.objects.filter(dept_name__contains=kw).only().values_list('dept_no', 'dept_name', 'dept_user').order_by('dept_no')
+            p = Paginator(qSet, iPP)
+            # json_response = serializers.serialize('json', list(p.object_list))
+            d = json.dumps(list(p.object_list))
+            d = json.loads(d)
+            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+            pl = json.dumps(list(plist))
+            pl = json.loads(pl)
+        else:
+            return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+        return JsonResponse({"success": True, "code": 200, "message":"操作成功", "data":{'dept':d, 'plist':pl, 'page':pN}})
+    else:
+        return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+
+
+#######################################
+# 课程审批API
 
 # 审批开课申请
 @login_required
@@ -198,3 +277,15 @@ def search_dept_api(request):
 @ensure_csrf_cookie
 def dept_link_user_api(request):
     return JsonResponse({"success": False, "code": 400, "message":"", "data":""})
+
+
+#######################################
+# 学期设置API
+
+# 学期设置
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def create_semester_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
