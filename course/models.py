@@ -22,9 +22,8 @@ class Department(models.Model):
 class Course(models.Model):
     id = models.CharField(max_length=6, primary_key=True, verbose_name='课程编码')
     name = models.CharField(max_length=50, verbose_name="课程名")
-    introduction = models.CharField(max_length=250, verbose_name="介绍")
+    description = models.CharField(max_length=250, verbose_name="课程描述")
     credit = models.IntegerField(verbose_name="学分")
-    description = models.CharField(max_length=127, verbose_name='课程描述')
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.teacher.name)
@@ -37,7 +36,7 @@ def weekday_choices():
 
 # 课程表
 class Schedule(models.Model):
-    weekday = models.IntegerField(choices=weekday_choices(), verbose_name="星期？")
+    weekday = models.IntegerField(choices=weekday_choices(), verbose_name="星期")
     start_time = models.TimeField(verbose_name="上课时间")
     end_time = models.TimeField(verbose_name="下课时间")
     location = models.CharField(max_length=100, verbose_name="上课地点")

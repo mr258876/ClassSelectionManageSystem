@@ -66,16 +66,16 @@
     {% elif user.role == "teacher"%}
     <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
-        <label>搜索课程</label>
+        <label>所有课程</label>
     </a>
     <a href="{% url 'create_course' %}" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe3a0;</i>
         <label>开设课程</label>
     </a>
-    {% elif user.role == "admin"%}
+    {% else %}
     <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
-        <label>搜索课程</label>
+        <label>所有课程</label>
     </a>
     <a href="javascript:void(0);" class="mdui-ripple mdui-ripple-white mdui-bottom-nav-active">
         <i class="mdui-icon material-icons">&#xe869;</i>

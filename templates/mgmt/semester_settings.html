@@ -1,5 +1,5 @@
 {% extends "mgmt/mgmt.html" %}
-{% block title %}选课系统-检索用户{% endblock %}
+{% block title %}选课系统-学期设置{% endblock %}
 {% block nav-title %}系统管理{% endblock %}
 
 {% block content %}
@@ -8,7 +8,7 @@
         <div class="mdui-row">
             <div class="main-header mdui-typo">
                 <div class="mdui-col-xs-12">
-                    <h1 id="add">检索用户</h1>
+                    <h1 id="add">学期设置</h1>
                 </div>
             </div>
         </div>
@@ -17,8 +17,7 @@
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
                 <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
-                    <option value="uid" selected>UID</option>
-                    <option value="name">姓名</option>
+                    <option value="year" selected>学年</option>
                 </select>
                 <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
                     <input class="mdui-textfield-input" type="text" name='keyword' />
@@ -34,11 +33,13 @@
     <table class="mdui-table mdui-table-hoverable">
         <thead>
             <tr>
-                <td>UID</td>
-                <td>用户名</td>
-                <td>E-Mail</td>
-                <td>权限</td>
-                <td>是否启用</td>
+                <td>学期名</td>
+                <td>学年</td>
+                <td>学期编号</td>
+                <td>起始日期</td>
+                <td>结束日期</td>
+                <td>选课开始时间</td>
+                <td>选课结束时间</td>
                 <td>操作</td>
             </tr>
         </thead>
@@ -59,9 +60,15 @@
     </div>
 
     <div class="mdui-dialog" id="input-dialog">
-        <div class="mdui-dialog-title" id="input-dialog-title"></div>
+        <div class="mdui-dialog-title" id="input-dialog-title">添加学期</div>
         <div class="mdui-dialog-content mdui-textfield">
-            <input class="mdui-textfield-input" id='input-dialog-input' />
+            <input class="mdui-textfield-input" id='input-dialog-name' name='name'/>
+            <input class="mdui-textfield-input" id='input-dialog-year' name='year'/>
+            <input class="mdui-textfield-input" id='input-dialog-number' name='number'/>
+            <input class="mdui-textfield-input" id='input-dialog-startDate' name='startDate'/>
+            <input class="mdui-textfield-input" id='input-dialog-endDate' name='endDate'/>
+            <input class="mdui-textfield-input" id='input-dialog-selectStarts' name='selectStarts'/>
+            <input class="mdui-textfield-input" id='input-dialog-selectEnds' name='selectEnds'/>
         </div>
         <div class="mdui-dialog-actions">
             <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>取消</button>

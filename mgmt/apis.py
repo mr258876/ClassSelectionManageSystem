@@ -107,7 +107,7 @@ def search_user_api(request):
             qSet = User.objects.filter(uid__contains=kw).only().values_list('uid', 'name', 'email', 'role', 'is_active').order_by('uid')
             p = Paginator(qSet, iPP)
             # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.object_list))
+            d = json.dumps(list(p.page(pN)))
             d = json.loads(d)
             plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
             pl = json.dumps(list(plist))
@@ -116,7 +116,7 @@ def search_user_api(request):
             qSet = User.objects.filter(name__contains=kw).only().values_list('uid', 'name', 'email', 'role', 'is_active').order_by('uid')
             p = Paginator(qSet, iPP)
             # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.object_list))
+            d = json.dumps(list(p.page(pN)))
             d = json.loads(d)
             plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
             pl = json.dumps(list(plist))
@@ -286,10 +286,36 @@ def dept_link_user_api(request):
 #######################################
 # 学期设置API
 
-# 学期设置
+# 创建学期
 @login_required
 @user_passes_test(user_is_admin)
 @require_http_methods(['POST'])
 @ensure_csrf_cookie
 def create_semester_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+
+
+# 查询学期
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def query_semester_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+
+
+# 修改学期
+@login_required
+@user_passes_test(user_is_admin)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def query_semester_api(request):
+    return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+
+
+# 查询当前学期
+@login_required
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+def get_semester_api(request):
     return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})

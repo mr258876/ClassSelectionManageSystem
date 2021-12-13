@@ -56,6 +56,8 @@
         </p>
     </div>
 
+    <div id='current-page' hidden>1</div>
+
 
 </div>
 {% endblock %}
@@ -64,7 +66,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 
 <script>
-    $(document).ready(searchDept());
+    $(document).ready(searchDept(false));
 
     function getCookie(name) {
         let cookieValue = null;
@@ -132,6 +134,7 @@
     }
 
     function drawPList(list, current) {
+        $("#current-page").html(current);
         $("#page-count").html("第" + current + "页，共" + list[list.length - 1] + "页");
         $("#page-selector").empty();
         for (var i = 0; i < list.length; i++) {
@@ -139,7 +142,11 @@
             if (current == list[i]) {
                 s = s + "mdui-color-theme-accent ";
             }
-            s = s + "' onclick='searchUser(page=" + list[i] + ");'>" + list[i] + "</div>";
+
+            if (list[i] != '...'){
+                s = s + "' onclick='searchUser(false, page=" + list[i] + ");"
+            } 
+            s = s + "'>" + list[i] + "</div>";
             $("#page-selector").append(s);
         }
         mdui.mutation();
