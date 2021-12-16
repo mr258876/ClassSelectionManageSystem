@@ -23,30 +23,37 @@
                     <input class="mdui-textfield-input" type="text" name='keyword' />
                 </div>
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
-                    style="margin-top: 16px;" onclick="searchUser();">检索</div>
+                    style="margin-top: 16px;" onclick="searchSemester();">检索</div>
             </div>
             <input id='page' name='page' value="1" hidden />
             <input name='itemPerPage' value="25" hidden />
         </form>
     </div>
 
-    <table class="mdui-table mdui-table-hoverable">
-        <thead>
-            <tr>
-                <td>学期名</td>
-                <td>学年</td>
-                <td>学期编号</td>
-                <td>起始日期</td>
-                <td>结束日期</td>
-                <td>选课开始时间</td>
-                <td>选课结束时间</td>
-                <td>操作</td>
-            </tr>
-        </thead>
-        <tbody id="table-body">
+    <div id="add-semester" class="mdui-row mdui-typo">
+        <div class="mdui-col-xs-10">当前学期：<p id="current-semester"></p></div>
+        <div class="mdui-btn mdui-ripple mdui-color-theme-accent mdui-col-xs-2" onclick="addSemester();">添加学期</div>
+    </div>
 
-        </tbody>
-    </table>
+    <div class="mdui-table-fluid">
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <td>学期名</td>
+                    <td>学年</td>
+                    <td>学期编号</td>
+                    <td>起始日期</td>
+                    <td>结束日期</td>
+                    <td>选课开始时间</td>
+                    <td>选课结束时间</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+
+            </tbody>
+        </table>
+    </div>
 
     </br>
 
@@ -62,13 +69,33 @@
     <div class="mdui-dialog" id="input-dialog">
         <div class="mdui-dialog-title" id="input-dialog-title">添加学期</div>
         <div class="mdui-dialog-content mdui-textfield">
-            <input class="mdui-textfield-input" id='input-dialog-name' name='name'/>
-            <input class="mdui-textfield-input" id='input-dialog-year' name='year'/>
-            <input class="mdui-textfield-input" id='input-dialog-number' name='number'/>
-            <input class="mdui-textfield-input" id='input-dialog-startDate' name='startDate'/>
-            <input class="mdui-textfield-input" id='input-dialog-endDate' name='endDate'/>
-            <input class="mdui-textfield-input" id='input-dialog-selectStarts' name='selectStarts'/>
-            <input class="mdui-textfield-input" id='input-dialog-selectEnds' name='selectEnds'/>
+            <label class="mdui-textfield-label">学期名称</label>
+            <input class="mdui-textfield-input" id='input-dialog-name' name='name' />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">学年</label>
+            <input class="mdui-textfield-input" id='input-dialog-year' name='year' />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">学期编号</label>
+            <input class="mdui-textfield-input" id='input-dialog-number' name='no' />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">学期开始日期</label>
+            <input class="mdui-textfield-input" id='input-dialog-startDate' name='startDate' type="date" />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">学期结束日期</label>
+            <input class="mdui-textfield-input" id='input-dialog-endDate' name='endDate' type="date" />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">选课开始时间</label>
+            <input class="mdui-textfield-input" id='input-dialog-selectStarts' name='selectStarts'
+                type="datetime-local" />
+            <!-- </div>
+        <div class="mdui-dialog-content mdui-textfield"> -->
+            <label class="mdui-textfield-label">选课结束时间</label>
+            <input class="mdui-textfield-input" id='input-dialog-selectEnds' name='selectEnds' type="datetime-local" />
         </div>
         <div class="mdui-dialog-actions">
             <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>取消</button>
@@ -85,7 +112,7 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 
 <script>
-    $(document).ready(searchUser(false));
+    $(document).ready(function () {getCurrentSemester(); searchSemester(false);});
 
     function getCookie(name) {
         let cookieValue = null;
@@ -103,14 +130,39 @@
         return cookieValue;
     }
 
-    function searchUser(snack_bar, page) {
-        if(!arguments[0]) snack_bar = true;
-        if(!arguments[1]) page = 1;
+    function getCurrentSemester() {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        $.ajax({
+            url: "{% url 'get_semester_api' %}",
+            type: 'POST',
+            cache: false,
+            data: f,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                if (res.success) {
+                    $("#current-semester").html(res.data.name);
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "获取当前学期失败", position: 'top' });
+            }
+        });
+    }
+
+    function searchSemester(snack_bar, page) {
+        if (!arguments[0]) snack_bar = true;
+        if (!arguments[1]) page = 1;
 
         $("#progress-bar").removeAttr("hidden");
         $('#page').val(page);
         $.ajax({
-            url: "{% url 'search_user_api' %}",
+            url: "{% url 'search_semester_api' %}",
             type: 'POST',
             cache: false,
             data: new FormData($("#search-user-form")[0]),
@@ -124,7 +176,7 @@
                     mdui.snackbar({ message: res.message, position: 'top' });
                 }
                 if (res.success) {
-                    drawTable(res.data.users);
+                    drawTable(res.data.semester);
                     drawPList(res.data.plist, res.data.page);
                 }
             },
@@ -139,22 +191,19 @@
         $("#table-body").empty();
         $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable")
         for (var i = 0; i < list.length; i++) {
-            var s = "<tr>";
-            var uid;
+            var s = "<tr ";
+            var sid;
             for (var j = 0; j < list[i].length; j++) {
                 if (j == 0) {
-                    uid = list[i][j];
+                    sid = list[i][j];
+                    s = s + "id=" + sid + ">";
+                    continue;
                 }
                 s = s + "<td>" + list[i][j] + "</td>";
             }
             s = s + "<td>";
-            s = s + "<button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button>";
-            s = s + "<ul class='mdui-menu' id='menu" + uid + "'>";
-            s = s + "<li class='mdui-menu-item'><a onclick='modUser(" + uid + ", 0);' class='mdui-ripple'>修改邮箱</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='modUser(" + uid + ", 1);' class='mdui-ripple'>修改密码</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='setUserInfo(" + uid + ", 'setActive', true)' class='mdui-ripple'>启用</a></li>";
-            s = s + "<li class='mdui-menu-item'><a onclick='setUserInfo(" + uid + ", 'setActive', false)' class='mdui-ripple'>禁用</a></li>";
-            s = s + "</ul></td>";
+            s = s + "<button class='mdui-btn mdui-color-theme-accent' onclick='modSemester(" + sid + ")'>操作</button>";
+            s = s + "</td>";
             s = s + "</tr>";
             $("#table-body").append(s);
         }
@@ -171,35 +220,27 @@
                 s = s + "mdui-color-theme-accent ";
             }
 
-            if (list[i] != '...'){
-                s = s + "' onclick='searchUser(false, page=" + list[i] + ");"
-            } 
+            if (list[i] != '...') {
+                s = s + "' onclick='searchSemester(false, page=" + list[i] + ");"
+            }
             s = s + "'>" + list[i] + "</div>";
             $("#page-selector").append(s);
         }
         mdui.mutation();
     }
 
-    function setUserInfo(uid, operation, value) {
+    function addSemesterAPI() {
         $("#progress-bar").removeAttr("hidden");
         var f = new FormData();
-        f.append("uid", uid);
-        f.append("operation", operation);
-        switch (operation) {
-            case "setActive":
-                f.append("active", value);
-                break;
-            case "changePassword":
-                f.append("password", value);
-                break;
-            case "changeEmail":
-                f.append("email", value);
-                break;
-            default:
-                break;
-        }
+        f.append("name", $('#input-dialog-name').val());
+        f.append("year", $('#input-dialog-year').val());
+        f.append("no", $('#input-dialog-number').val());
+        f.append("startDate", $('#input-dialog-startDate').val());
+        f.append("endDate", $('#input-dialog-endDate').val());
+        f.append("selectStarts", $('#input-dialog-selectStarts').val());
+        f.append("selectEnds", $('#input-dialog-selectEnds').val());
         $.ajax({
-            url: "{% url 'mod_user_api' %}",
+            url: "{% url 'add_semester_api' %}",
             type: 'POST',
             cache: false,
             data: f,
@@ -211,7 +252,7 @@
                 $("#progress-bar").prop("hidden", "hidden");
                 mdui.snackbar({ message: res.message, position: 'top' });
                 if (res.success) {
-                    searchUser(false, $("#current-page").html());
+                    searchSemester(false, $("#current-page").html());
                 }
             },
             error: function (res) {
@@ -221,22 +262,81 @@
         });
     }
 
-    function modUser(uid, operation) {
-        $("#input-dialog-title").html("为" + uid + "设置" + (operation == 1 ? "新密码" : "新邮箱"));
-        $('#input-dialog-input').val("")
-        if(operation == 1) {
-            $('#input-dialog-input').prop("type", "password");
-        } else {
-            $('#input-dialog-input').prop("type", "email");
-        }
+    function addSemester(sid, data) {
+        $("#input-dialog-title").html("添加学期");
+        $('#input-dialog-name').val("");
+        $('#input-dialog-year').val("");
+        $('#input-dialog-number').val("");
+        $('#input-dialog-startDate').val("");
+        $('#input-dialog-endDate').val("");
+        $('#input-dialog-selectStarts').val("");
+        $('#input-dialog-selectEnds').val("");
+
         var diag = new mdui.Dialog('#input-dialog');
         diag.open();
+        mdui.mutation();
         delete diag;
         $('#input-dialog').one('confirm.mdui.dialog', function () {
-            var value = $("#input-dialog-input").val();
-            setUserInfo(uid, (operation == 1 ? "changePassword" : "changeEmail"), value);
+            addSemesterAPI();
         });
     }
 
+    function modSemester(sid) {
+        $("#input-dialog-title").html("修改学期");
+        var data_list = [];
+        var tr = $('#' + sid).children().each(function (params) {
+            data_list.push($(this).text());
+        });
+        $('#input-dialog-name').val(data_list[0]);
+        $('#input-dialog-year').val(data_list[1]);
+        $('#input-dialog-number').val(data_list[2]);
+        $('#input-dialog-startDate').val(data_list[3]);
+        $('#input-dialog-endDate').val(data_list[4]);
+        $('#input-dialog-selectStarts').val(data_list[5].replace(" ", "T"));
+        $('#input-dialog-selectEnds').val(data_list[6].replace(" ", "T"));
+
+        var diag = new mdui.Dialog('#input-dialog');
+        diag.open();
+        mdui.mutation();
+        delete diag;
+        $('#input-dialog').one('confirm.mdui.dialog', function () {
+            var value = $("#input-dialog-input").val();
+            modSemesterAPI(sid);
+        });
+    }
+
+    function modSemesterAPI(sid) {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        f.append("id", sid)
+        f.append("name", $('#input-dialog-name').val());
+        f.append("year", $('#input-dialog-year').val());
+        f.append("no", $('#input-dialog-number').val());
+        f.append("startDate", $('#input-dialog-startDate').val());
+        f.append("endDate", $('#input-dialog-endDate').val());
+        f.append("selectStarts", $('#input-dialog-selectStarts').val());
+        f.append("selectEnds", $('#input-dialog-selectEnds').val());
+        $.ajax({
+            url: "{% url 'mod_semester_api' %}",
+            type: 'POST',
+            cache: false,
+            data: f,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: res.message, position: 'top' });
+                if (res.success) {
+                    searchSemester(false, $("#current-page").html());
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    }
 </script>
 {% endblock %}

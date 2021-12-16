@@ -31,21 +31,23 @@
         </form>
     </div>
 
-    <table class="mdui-table mdui-table-hoverable">
-        <thead>
-            <tr>
-                <td>UID</td>
-                <td>用户名</td>
-                <td>E-Mail</td>
-                <td>权限</td>
-                <td>是否启用</td>
-                <td>操作</td>
-            </tr>
-        </thead>
-        <tbody id="table-body">
+    <div class="mdui-table-fluid">
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <td>UID</td>
+                    <td>用户名</td>
+                    <td>E-Mail</td>
+                    <td>权限</td>
+                    <td>是否启用</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
     </br>
 
@@ -97,8 +99,8 @@
     }
 
     function searchUser(snack_bar, page) {
-        if(!arguments[0]) snack_bar = true;
-        if(!arguments[1]) page = 1;
+        if (!arguments[0]) snack_bar = true;
+        if (!arguments[1]) page = 1;
 
         $("#progress-bar").removeAttr("hidden");
         $('#page').val(page);
@@ -164,9 +166,9 @@
                 s = s + "mdui-color-theme-accent ";
             }
 
-            if (list[i] != '...'){
+            if (list[i] != '...') {
                 s = s + "' onclick='searchUser(false, page=" + list[i] + ");"
-            } 
+            }
             s = s + "'>" + list[i] + "</div>";
             $("#page-selector").append(s);
         }
@@ -217,7 +219,7 @@
     function modUser(uid, operation) {
         $("#input-dialog-title").html("为" + uid + "设置" + (operation == 1 ? "新密码" : "新邮箱"));
         $('#input-dialog-input').val("")
-        if(operation == 1) {
+        if (operation == 1) {
             $('#input-dialog-input').prop("type", "password");
         } else {
             $('#input-dialog-input').prop("type", "email");

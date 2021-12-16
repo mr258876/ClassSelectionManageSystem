@@ -22,7 +22,7 @@ class Department(models.Model):
 class Course(models.Model):
     id = models.CharField(max_length=6, primary_key=True, verbose_name='课程编码')
     name = models.CharField(max_length=50, verbose_name="课程名")
-    description = models.CharField(max_length=250, verbose_name="课程描述")
+    description = models.CharField(null=True, max_length=250, verbose_name="课程描述")
     credit = models.IntegerField(verbose_name="学分")
 
     def __str__(self):
@@ -90,7 +90,7 @@ class OpenCourseApplication(models.Model):
 
     teacher = models.ManyToManyField(Teacher, verbose_name='教师')
     course = models.ManyToManyField(Course, verbose_name='课程')
-    description = models.CharField(null=False, max_length=127, verbose_name= '开课描述')
+    description = models.CharField(null=True, max_length=127, verbose_name= '开课描述')
     result = models.CharField(null=False, choices=status, max_length=1, default='N', verbose_name='审核状态')
 
 

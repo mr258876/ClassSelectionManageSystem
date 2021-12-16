@@ -31,19 +31,21 @@
         </form>
     </div>
 
-    <table class="mdui-table mdui-table-hoverable">
-        <thead>
-            <tr>
-                <td>院系编号</td>
-                <td>院系名称</td>
-                <td>操作员</td>
-                <td>操作</td>
-            </tr>
-        </thead>
-        <tbody id="table-body">
+    <div class="mdui-table-fluid">
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <td>院系编号</td>
+                    <td>院系名称</td>
+                    <td>操作员</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
     </br>
 
@@ -143,9 +145,9 @@
                 s = s + "mdui-color-theme-accent ";
             }
 
-            if (list[i] != '...'){
+            if (list[i] != '...') {
                 s = s + "' onclick='searchUser(false, page=" + list[i] + ");"
-            } 
+            }
             s = s + "'>" + list[i] + "</div>";
             $("#page-selector").append(s);
         }

@@ -34,7 +34,7 @@ def mgmt_home(request):
 def switch_operation(request, operation):
     operations = ['add_user', 'mod_user', 
                     'add_dept', 'mod_dept',
-                    'set_selection_schedule']
+                    'semester_settings']
     if operation in operations:
         return eval(operation)(request)
 
@@ -62,8 +62,8 @@ def mod_user(request):
 # 设置选课时间
 @login_required
 @user_passes_test(user_is_admin)
-def set_selection_schedule(request):
-    pass
+def semester_settings(request):
+    return render(request, "mgmt/semester_settings.html")
 
 
 #######################################
