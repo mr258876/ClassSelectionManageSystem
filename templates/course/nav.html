@@ -47,37 +47,37 @@
 {% block nav-bar %}
 <div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar">
     {% if user.role == "student" %}
-    <a href="{% url 'view_course' 'select' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'select'%}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'course'%}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' == request.path %}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe8b6;</i>
+        <label>所有课程</label>
+    </a>
+    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if view_kind == 'select'%}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe86c;</i>
         <label>选课</label>
     </a>
-    <a href="{% url 'view_course' 'withdraw' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'withdraw'%}mdui-bottom-nav-active{% endif %}">
+    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if view_kind == 'withdraw'%}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe15c;</i>
-        <label>退课</label>
-    </a>
-    <a href="{% url 'view_course' 'is_end' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'is_end'%}mdui-bottom-nav-active{% endif %}">
-        <i class="mdui-icon material-icons">&#xe149;</i>
-        <label>查看结课课程</label>
-    </a>
-    <a href="{% url 'view_course' 'current' %}" class="mdui-ripple mdui-ripple-white {% if view_kind == 'current'%}mdui-bottom-nav-active{% endif %}">
-        <i class="mdui-icon material-icons">&#xe85d;</i>
-        <label>查看当前课程</label>
+        <label>已选课程</label>
     </a>
     {% elif user.role == "teacher"%}
-    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'course' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>所有课程</label>
     </a>
-    <a href="{% url 'create_course' %}" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
+    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe3a0;</i>
         <label>开设课程</label>
     </a>
+    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
+        <i class="mdui-icon material-icons">&#xe3a0;</i>
+        <label>我的课程</label>
+    </a>
     {% else %}
-    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/teacher/' == request.path %}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'course' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>所有课程</label>
     </a>
-    <a href="javascript:void(0);" class="mdui-ripple mdui-ripple-white mdui-bottom-nav-active">
+    <a href="{% url 'mgmt' %}" class="mdui-ripple mdui-ripple-white">
         <i class="mdui-icon material-icons">&#xe869;</i>
         <label>系统管理</label>
     </a>
@@ -91,7 +91,7 @@
         <li class="mdui-subheader">关于</li>
         <li class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88f;</i>
-            <div class="mdui-list-item-content">关于</div>
+            <a href="{% url 'about' %}" class="mdui-list-item-content" target='_blank'>关于</a>
         </li>
     </ul>
 </div>

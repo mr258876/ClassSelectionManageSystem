@@ -1,0 +1,172 @@
+{% extends "mgmt/mgmt.html" %}
+{% block title %}选课系统-新建课程班级{% endblock %}
+{% block nav-title %}系统管理{% endblock %}
+
+{% block tab-bar %}
+<div class="mdui-tab mdui-color-theme mdui-tab-centered" mdui-tab>
+    <a href="#create-course" class="mdui-ripple mdui-ripple-white">
+        <label>新建课程</label>
+    </a>
+    <a href="#create-class" class="mdui-ripple mdui-ripple-white">
+        <label>新建班级</label>
+    </a>
+</div>
+{% endblock %}
+
+
+{% block body-extra-class %}mdui-appbar-with-tab{% endblock %}
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="create-course">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">新建课程</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-course-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe865;</i>
+                    <label class="mdui-textfield-label">课程id</label>
+                    <input class="mdui-textfield-input" type="text" name='course_id' />
+                    <div class="mdui-textfield-helper">课程id</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe867;</i>
+                    <label class="mdui-textfield-label">课程名称</label>
+                    <input class="mdui-textfield-input" type="text" name='course_name' />
+                    <div class="mdui-textfield-helper">课程名称</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe866;</i>
+                    <label class="mdui-textfield-label">课程简介</label>
+                    <textarea class="mdui-textfield-input" type="text" name='course_description'></textarea>
+                    <div class="mdui-textfield-helper">课程简介(可选)</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe263;</i>
+                    <label class="mdui-textfield-label">学分</label>
+                    <input class="mdui-textfield-input" type="text" name='course_credit'/>
+                    <div class="mdui-textfield-helper">电子邮箱，长度不超过32字符</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe80c;</i>
+                    <label class="mdui-textfield-label">开课院系</label>
+                    <input class="mdui-textfield-input" type="text" name='course_dept'/>
+                    <div class="mdui-textfield-helper">开课院系Id</div>
+                </div>
+            </div>
+
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12">
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(0);">创建课程
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="create-class">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="import">新建班级</h1>
+                </div>
+            </div>
+        </div>
+        <form id="add-class-form">
+            {% csrf_token %}
+            <div class="mdui-row">
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe865;</i>
+                    <label class="mdui-textfield-label">课程id</label>
+                    <input class="mdui-textfield-input" type="text" name='class_course_id' />
+                    <div class="mdui-textfield-helper">课程id</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe867;</i>
+                    <label class="mdui-textfield-label">班级名称</label>
+                    <input class="mdui-textfield-input" type="text" name='class_name' />
+                    <div class="mdui-textfield-helper">班级名称</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe866;</i>
+                    <label class="mdui-textfield-label">授课教师</label>
+                    <textarea class="mdui-textfield-input" type="text" name='class_teacher_uid'></textarea>
+                    <div class="mdui-textfield-helper">授课教师uid</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe263;</i>
+                    <label class="mdui-textfield-label">学期</label>
+                    <input class="mdui-textfield-input" type="text" name='class_semester_id'/>
+                    <div class="mdui-textfield-helper">学期id</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                    <i class="mdui-icon material-icons">&#xe80c;</i>
+                    <label class="mdui-textfield-label">最大人数</label>
+                    <input class="mdui-textfield-input" type="text" name='class_amount'/>
+                    <div class="mdui-textfield-helper">最大人数</div>
+                </div>
+                <div
+                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.email %} mdui-textfield-invalid {% endif %}">
+                    <i class="mdui-icon material-icons">&#xe8d3;</i>
+                    <label class="mdui-textfield-label">计分方式</label>
+                    <div class="mdui-textfield-helper">计分方式</div>
+                    <select class="mdui-select mdui-textfield-input" name="class_grade_type">
+                        <option value="13" selected>十三级</option>
+                        <option value="PF">通过/不通过</option>
+                        <option value="SC">百分制</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mdui-row">
+                <div class="mdui-col-xs-12">
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(1);">创建班级
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+<script>
+    function addCourse(mode) {
+        $("#progress-bar").removeAttr("hidden");
+        $.ajax({
+            url: mode==0?"{% url 'add_course_api' %}":"{% url 'add_class_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($(mode==0?"#add-course-form":"#add-class-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: res.message, position: 'top' });
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    };
+</script>
+{% endblock %}

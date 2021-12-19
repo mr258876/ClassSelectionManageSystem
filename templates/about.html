@@ -1,0 +1,25 @@
+{% extends "background.html" %}
+{% load static %}
+
+{% block title %}选课系统-关于{% endblock %}
+
+{% block nav-button-l %}
+<a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons"></i></a>
+{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
+{% block nav-button-r %}
+<a href="javaScript:location.reload();" class="mdui-btn mdui-btn-icon" id="refresh-button"><i
+        class="mdui-icon material-icons"></i></a>
+{% endblock %}
+
+
+{% block content %}
+<div class="mdui-container">
+    <div class="mdui-typo">
+        <h1><i class="mdui-icon material-icons">&#xe88f;</i>关于</h1>
+        <p>
+            A simple class selection system.
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@
 {% block drawer %}
 <div class="mdui-drawer mdui-drawer-close mdui-color-white" id="left-drawer">
     <ul class="mdui-list">
+        {% if user.is_superuser %}
         <li class="mdui-subheader">用户管理</li>
         <li class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons">&#xe145;</i>
@@ -26,10 +27,24 @@
             <i class="mdui-list-item-icon mdui-icon material-icons">&#xe422;</i>
             <a href="{% url 'semester_settings' %}" class="mdui-list-item-content">学期设置</a>
         </li>
+        {% endif %}
+        <li class="mdui-subheader">课程管理</li>
+        <li class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe145;</i>
+            <a href="{% url 'add_course_class' %}" class="mdui-list-item-content">创建课程/班级</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b6;</i>
+            <a href="{% url 'mod_course_class' %}" class="mdui-list-item-content">检索/修改课程班级</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe8b6;</i>
+            <a href="{% url 'class_schedule' %}" class="mdui-list-item-content">课程时间管理</a>
+        </li>
         <li class="mdui-subheader">关于</li>
         <li class="mdui-list-item mdui-ripple">
             <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88f;</i>
-            <div class="mdui-list-item-content">关于</div>
+            <a href="{% url 'about' %}" class="mdui-list-item-content" target='_blank'>关于</a>
         </li>
     </ul>
 </div>
@@ -37,7 +52,7 @@
 
 {% block nav-bar %}
 <div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar">
-    <a href="{% url 'course' 'teacher' %}" class="mdui-ripple mdui-ripple-white">
+    <a href="{% url 'course' %}" class="mdui-ripple mdui-ripple-white">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>搜索课程</label>
     </a>

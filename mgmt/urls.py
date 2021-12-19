@@ -5,6 +5,7 @@ from . import apis, views
 
 urlpatterns = [
     path('', views.mgmt_home, name="mgmt_home"),
+    path('', views.mgmt_home, name="mgmt"),
     path('<slug:operation>/', views.switch_operation, name="switch_operation"),
     path('add_user/', views.add_user, name="add_user"),
     path('mod_user/', views.mod_user, name="mod_user"),
@@ -12,6 +13,9 @@ urlpatterns = [
     path('mod_dept/', views.mod_dept, name="mod_dept"),
     path('mod_dept/<slug:dept_no>', views.mod_dept_info, name="mod_dept_info"),
     path('semester_settings/', views.semester_settings, name="semester_settings"),
+    path('add_course_class', views.add_course_class, name='add_course_class'),
+    path('mod_course_class', views.mod_course_class, name='mod_course_class'),
+    path('class_schedule', views.class_schedule, name='class_schedule'),
     
     path('apis/add_user', apis.add_user_api, name='add_user_api'),
     path('apis/import_user', apis.import_user_api, name='import_user_api'),

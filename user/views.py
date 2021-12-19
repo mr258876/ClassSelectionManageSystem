@@ -97,7 +97,7 @@ class UpdateUserView(UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse("course", kwargs={"role": "student"})
+        return reverse("course")
 
 
 # 处理教师学生信息更新请求
@@ -135,7 +135,7 @@ class UpdateStudentView(UpdateView):
         return context
     
     def get_success_url(self):
-        return reverse("course", kwargs={"role": "student"})
+        return reverse("course")
 
     def form_valid(self, form):
         self.object.user.need_complete_info = False
@@ -158,7 +158,7 @@ class UpdateTeacherView(UpdateView):
         return context
     
     def get_success_url(self):
-        return reverse("course", kwargs={"role": "teacher"})
+        return reverse("course")
     
     def form_valid(self, form):
         self.object.user.need_complete_info = False

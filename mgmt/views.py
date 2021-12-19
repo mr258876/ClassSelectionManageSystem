@@ -23,7 +23,7 @@ def mgmt_home(request):
     if request.user.is_superuser:
         return redirect(reverse("add_user"))
     elif hasattr(request.user, 'department'):
-        return render(request, "mgmt/mod_dept_info.html", {'dept_no': request.user.department})
+        return render(reverse("add_course_class"))
     else:
         return render(request, "info.html", {'title': '权限错误', 'info': '您没有操作任何院系的权限，请联系管理员', 'next': 'logout'})
 
@@ -32,9 +32,14 @@ def mgmt_home(request):
 @login_required
 @user_passes_test(user_mgmtable)
 def switch_operation(request, operation):
-    operations = ['add_user', 'mod_user', 
-                    'add_dept', 'mod_dept',
-                    'semester_settings']
+    operations = None
+    if request.user.is_superuser:
+        operations = {'add_user', 'mod_user', 
+                        'add_dept', 'mod_dept',
+                        'semester_settings',
+                        'add_course_class', 'mod_course_class', 'class_schedule'}
+    else:
+        operations = {'add_course_class', 'mod_course_class', 'class_schedule'}
     if operation in operations:
         return eval(operation)(request)
 
@@ -88,3 +93,27 @@ def mod_dept(request):
 @user_passes_test(user_is_admin)
 def mod_dept_info(request, dept_no):
     return render(request, "mgmt/mod_dept_info.html", {'dept_no': dept_no})
+
+
+#######################################
+# 课程/班级管理
+
+# 创建课程/班级
+@login_required
+@user_passes_test(user_mgmtable)
+def add_course_class(request):
+    return render(request, "mgmt/add_course_class.html")
+
+
+# 修改课程/班级
+@login_required
+@user_passes_test(user_mgmtable)
+def mod_course_class(request):
+    return render(request, "mgmt/mod_course_class.html")
+
+
+# 课程时间表管理
+@login_required
+@user_passes_test(user_mgmtable)
+def class_schedule(request):
+    return render(request, "mgmt/class_schedule.html")

@@ -29,10 +29,8 @@ def user_is_admin(user):
     return user.is_superuser
 
 # 院系权限测试器
-
-
 def user_is_dept(user):
-    return user.role == 'dept'
+    return user.role == 'dept' and hasattr(user, 'department')
 
 
 #######################################
@@ -107,28 +105,22 @@ def search_user_api(request):
     iPP = request.POST.get("itemPerPage", 25)
 
     if k and k in kList:
+        qSet = None
         if k == 'uid':
             qSet = User.objects.filter(uid__contains=kw).only().values_list(
                 'uid', 'name', 'email', 'role', 'is_active').order_by('uid')
-            p = Paginator(qSet, iPP)
-            # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.page(pN)))
-            d = json.loads(d)
-            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
-            pl = json.dumps(list(plist))
-            pl = json.loads(pl)
         elif k == 'name':
             qSet = User.objects.filter(name__contains=kw).only().values_list(
                 'uid', 'name', 'email', 'role', 'is_active').order_by('uid')
-            p = Paginator(qSet, iPP)
-            # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.page(pN)))
-            d = json.loads(d)
-            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
-            pl = json.dumps(list(plist))
-            pl = json.loads(pl)
         else:
             return JsonResponse({"success": False, "code": 400, "message": "操作失败", "data": ""})
+        p = Paginator(qSet, iPP)
+        # json_response = serializers.serialize('json', list(p.object_list))
+        d = json.dumps(list(p.page(pN)))
+        d = json.loads(d)
+        plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+        pl = json.dumps(list(plist))
+        pl = json.loads(pl)
         return JsonResponse({"success": True, "code": 200, "message": "操作成功", "data": {'users': d, 'plist': pl, 'page': pN}})
     else:
         return JsonResponse({"success": False, "code": 400, "message": "操作失败", "data": ""})
@@ -193,15 +185,18 @@ def add_dept_api(request):
     if len(dept_set) > 0:
         return JsonResponse({"success": False, "code": 400, "message": "院系ID已存在", "data": ""})
 
-    user_set = User.objects.filter(uid=d_user)
-    if len(dept_set) == 0:
-        return JsonResponse({"success": False, "code": 400, "message": "用户id不存在", "data": ""})
-    if user_set[0].role != 'dept':
-        return JsonResponse({"success": False, "code": 400, "message": "用户权限错误", "data": ""})
+    dept_user = None
+    if d_user:
+        user_set = User.objects.filter(uid=d_user)
+        if len(user_set) == 0:
+            return JsonResponse({"success": False, "code": 400, "message": "用户id不存在", "data": ""})
+        if user_set[0].role != 'dept':
+            return JsonResponse({"success": False, "code": 400, "message": "用户权限错误", "data": ""})
+        dept_user = user_set[0]
 
     try:
         dept = Department(dept_no=d_no, dept_name=d_name,
-                          dept_user=user_set[0])
+                          dept_user=dept_user)
         dept.save()
     except Exception as e:
         return JsonResponse({"success": False, "code": 400, "message": "创建失败", "data": str(e)})
@@ -223,7 +218,7 @@ def mod_dept_api(request):
         return JsonResponse({"success": False, "code": 400, "message": "院系ID不存在", "data": ""})
 
     user_set = User.objects.filter(uid=d_user)
-    if len(dept_set) == 0:
+    if len(user_set) == 0:
         return JsonResponse({"success": False, "code": 400, "message": "用户id不存在", "data": ""})
     if user_set[0].role != 'dept':
         return JsonResponse({"success": False, "code": 400, "message": "用户权限错误", "data": ""})
@@ -253,43 +248,25 @@ def search_dept_api(request):
     iPP = request.POST.get("itemPerPage", 25)
 
     if k and k in kList:
+        qSet = None
         if k == 'deptId':
             qSet = Department.objects.filter(dept_no__contains=kw).only().values_list(
                 'dept_no', 'dept_name', 'dept_user').order_by('dept_no')
-            p = Paginator(qSet, iPP)
-            # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.object_list))
-            d = json.loads(d)
-            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
-            pl = json.dumps(list(plist))
-            pl = json.loads(pl)
         elif k == 'deptName':
             qSet = Department.objects.filter(dept_name__contains=kw).only().values_list(
                 'dept_no', 'dept_name', 'dept_user').order_by('dept_no')
-            p = Paginator(qSet, iPP)
-            # json_response = serializers.serialize('json', list(p.object_list))
-            d = json.dumps(list(p.object_list))
-            d = json.loads(d)
-            plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
-            pl = json.dumps(list(plist))
-            pl = json.loads(pl)
         else:
             return JsonResponse({"success": False, "code": 400, "message": "操作失败", "data": ""})
+        p = Paginator(qSet, iPP)
+        # json_response = serializers.serialize('json', list(p.object_list))
+        d = json.dumps(list(p.object_list))
+        d = json.loads(d)
+        plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
+        pl = json.dumps(list(plist))
+        pl = json.loads(pl)
         return JsonResponse({"success": True, "code": 200, "message": "操作成功", "data": {'dept': d, 'plist': pl, 'page': pN}})
     else:
         return JsonResponse({"success": False, "code": 400, "message": "操作失败", "data": ""})
-
-
-#######################################
-# 课程审批API
-
-# 审批开课申请
-@login_required
-@user_passes_test(user_is_dept)
-@require_http_methods(['POST'])
-@ensure_csrf_cookie
-def dept_link_user_api(request):
-    return JsonResponse({"success": False, "code": 400, "message": "", "data": ""})
 
 
 #######################################
@@ -421,7 +398,7 @@ def mod_semester_api(request):
 @ensure_csrf_cookie
 def get_semester_api(request):
     s_list = Semester.objects.filter(start_time__lte=datetime.date.today()).filter(end_time__gte=datetime.date.today())
-    if len(s_list) != 1:
-        return JsonResponse({"success": False, "code": 400, "message": "操作失败", "data": ""})
+    if len(s_list) == 0:
+        s_list = Semester.objects.filter(start_time__gte=datetime.date.today()).order_by('start_time')
     else:
         return JsonResponse({"success": True, "code": 200, "message": "操作成功", "data": {'id': s_list[0].id, 'name': s_list[0].semester_name}})
