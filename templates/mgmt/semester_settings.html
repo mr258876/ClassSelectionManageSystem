@@ -303,6 +303,9 @@
             var value = $("#input-dialog-input").val();
             modSemesterAPI(sid);
         });
+        $('#input-dialog').one('close.mdui.dialog', function () {
+            $("#input-dialog").unbind("confirm.mdui.dialog");
+        });
     }
 
     function modSemesterAPI(sid) {

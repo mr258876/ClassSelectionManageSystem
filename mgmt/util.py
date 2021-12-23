@@ -14,3 +14,9 @@ def get_semester_ids() -> List[Tuple[int, str]]:
     for s in s_list:
         result_list.append((s.id, s.semester_name))
     return result_list
+
+def get_now_elect_semester() -> Semester:
+    s_list = Semester.objects.filter(select_start__lte=datetime.datetime.now()).filter(select_end__gte=datetime.datetime.now())
+    if len(s_list) == 0:
+        return None
+    return s_list[0]

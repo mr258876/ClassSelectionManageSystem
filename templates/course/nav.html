@@ -47,15 +47,15 @@
 {% block nav-bar %}
 <div class="mdui-bottom-nav mdui-bottom-nav-text-auto mdui-color-theme" id="navibar">
     {% if user.role == "student" %}
-    <a href="{% url 'course'%}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' == request.path %}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'course' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>所有课程</label>
     </a>
-    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if view_kind == 'select'%}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'elect' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/elect' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe86c;</i>
         <label>选课</label>
     </a>
-    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if view_kind == 'withdraw'%}mdui-bottom-nav-active{% endif %}">
+    <a href="{% url 'my_classes' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/my_classes' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe15c;</i>
         <label>已选课程</label>
     </a>
@@ -64,11 +64,11 @@
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>所有课程</label>
     </a>
-    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
+    <!-- <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe3a0;</i>
         <label>开设课程</label>
-    </a>
-    <a href="javascript:;" class="mdui-ripple mdui-ripple-white {% if 'create_course' in request.path %}mdui-bottom-nav-active{% endif %}">
+    </a> -->
+    <a href="{% url 'my_classes' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/my_classes' == request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe3a0;</i>
         <label>我的课程</label>
     </a>

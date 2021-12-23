@@ -74,7 +74,7 @@ def search_class_api(request):
         p = Paginator(qSet, iPP)
         d = []
         for c in p.get_page(pN).object_list:
-            d.append([c.course.id, c.course.name, c.course.dept.dept_name, c.course.credit, c.grade_type, c.teacher.name])
+            d.append([c.id, c.course.id, c.course.name, c.course.dept.dept_name, c.course.credit, c.grade_type, c.teacher.name])
         plist = p.get_elided_page_range(pN, on_each_side=2, on_ends=1)
         pl = json.dumps(list(plist))
         pl = json.loads(pl)
@@ -352,6 +352,10 @@ def add_class_api(request):
     course_list = Course.objects.filter(id=c_course_id).only()
     if len(course_list) == 0:
         return JsonResponse({"success": False, "code": 400, "message":"课程不存在", "data":""})
+    # 若为院系用户且课程院系不对应
+    if not request.user.is_superuser:
+        if request.user.department != course_list[0].dept:
+            return JsonResponse({"success": False, "code": 400, "message":"权限不足", "data":""})
     teacher_list = Teacher.objects.filter(user__uid=c_teacher_uid).only()
     if len(teacher_list) == 0:
         return JsonResponse({"success": False, "code": 400, "message":"教师不存在", "data":""})
@@ -395,6 +399,36 @@ def mod_class_api(request):
         dept.save()
     except Exception as e:
         return JsonResponse({"success": False, "code": 400, "message": "创建失败", "data": str(e)})
+    return JsonResponse({"success": True, "code": 200, "message": "操作成功", "data": ""})
+
+
+# 删除课程/班级API
+@login_required
+@user_passes_test(user_mgmtable)
+@require_http_methods(['POST'])
+@ensure_csrf_cookie
+@transaction.atomic
+def del_course_api(request):
+    operation_list = {"del_course", "del_class"}
+
+    c_id = request.POST.get("courseId", "")
+    operation = request.POST.get("operation", "")
+
+    if operation not in operation_list:
+        return JsonResponse({"success": False, "code": 400, "message":"操作失败", "data":""})
+    elif operation == "del_course":
+        c_list = Course.objects.filter(id=c_id).only()
+    else:
+        c_list = Class.objects.filter(id=c_id).only()
+
+    if len(c_list) == 0:
+        return JsonResponse({"success": False, "code": 400, "message":"课程或班级不存在", "data":""})
+    
+    c = c_list[0]
+    try:
+        c.delete()
+    except:
+        return JsonResponse({"success": False, "code": 400, "message":"删除失败", "data":""})
     return JsonResponse({"success": True, "code": 200, "message": "操作成功", "data": ""})
 
 # TODO

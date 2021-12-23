@@ -23,7 +23,7 @@ def mgmt_home(request):
     if request.user.is_superuser:
         return redirect(reverse("add_user"))
     elif hasattr(request.user, 'department'):
-        return render(reverse("add_course_class"))
+        return redirect(reverse("add_course_class"))
     else:
         return render(request, "info.html", {'title': '权限错误', 'info': '您没有操作任何院系的权限，请联系管理员', 'next': 'logout'})
 
@@ -110,6 +110,20 @@ def add_course_class(request):
 @user_passes_test(user_mgmtable)
 def mod_course_class(request):
     return render(request, "mgmt/mod_course_class.html")
+
+
+# 修改课程信息
+@login_required
+@user_passes_test(user_mgmtable)
+def mod_course_info(request, course_id):
+    return render(request, "mgmt/mod_course_class_info.html", {"course_id": course_id})
+
+
+# 修改班级信息
+@login_required
+@user_passes_test(user_mgmtable)
+def mod_class_info(request, class_id):
+    return render(request, "mgmt/mod_course_class_info.html", {"class_id": class_id})
 
 
 # 课程时间表管理

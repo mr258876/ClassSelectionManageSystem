@@ -15,6 +15,8 @@ urlpatterns = [
     path('semester_settings/', views.semester_settings, name="semester_settings"),
     path('add_course_class', views.add_course_class, name='add_course_class'),
     path('mod_course_class', views.mod_course_class, name='mod_course_class'),
+    path('mod_course/<slug:course_id>', views.mod_course_info, name="mod_course"),
+    path('mod_class/<slug:class_id>', views.mod_class_info, name="mod_class"),
     path('class_schedule', views.class_schedule, name='class_schedule'),
     
     path('apis/add_user', apis.add_user_api, name='add_user_api'),
