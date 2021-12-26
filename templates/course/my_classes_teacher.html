@@ -1,43 +1,45 @@
-{% extends "mgmt/mgmt.html" %}
-{% block title %}选课系统-检索院系{% endblock %}
-{% block nav-title %}系统管理{% endblock %}
+{% extends "course/nav.html" %}
+{% block title %}选课系统-我的课程{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
 
 {% block content %}
 <div class="main-container mdui-container">
-    <div id="search-user">
+    <div id="search-course">
         <div class="mdui-row">
             <div class="main-header mdui-typo">
                 <div class="mdui-col-xs-12">
-                    <h1 id="add">检索院系</h1>
+                    <h1 id="add">我的课程</h1>
                 </div>
             </div>
         </div>
-        <form id="search-dept-form">
-            {% csrf_token %}
+        <form id="search-course-form">
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
-                <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
-                    <option value="deptId" selected>院系编号</option>
-                    <option value="deptName">院系名称</option>
+                <select class="mdui-select mdui-col-md-2 mdui-col-sm-4" id="semester-select" name="searchSemester" style="margin-top: 16px;">
+                    <option value="current" selected>当前学期</option>
                 </select>
-                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
-                    <input class="mdui-textfield-input" type="text" name='keyword' />
-                </div>
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
-                    style="margin-top: 16px;" onclick="searchDept();">检索</div>
+                    style="margin-top: 16px;" onclick="searchCourse();">检索</div>
             </div>
             <input id='page' name='page' value="1" hidden />
             <input name='itemPerPage' value="25" hidden />
         </form>
     </div>
 
-    <div class="mdui-table-fluid">
+    <div>
         <table class="mdui-table mdui-table-hoverable">
             <thead>
                 <tr>
-                    <td>院系编号</td>
-                    <td>院系名称</td>
-                    <td>操作员</td>
+                    <td>课程编号</td>
+                    <td>课程名称</td>
+                    <td>班级名称</td>
+                    <td>开课院系</td>
+                    <td>学分</td>
+                    <td>打分制</td>
+                    <td>授课教师</td>
+                    <td>上课人数</td>
+                    <td>课程容量</td>
+                    <td>授课时间</td>
                     <td>操作</td>
                 </tr>
             </thead>
@@ -49,7 +51,7 @@
 
     </br>
 
-    <div class="mdui-typo ">
+    <div class="mdui-typo">
         <p class="mdui-row-md-9" id="page-selector">
 
         </p>
@@ -58,8 +60,18 @@
         </p>
     </div>
 
-    <div id='current-page' hidden>1</div>
+    <div class="mdui-dialog" id="input-dialog">
+        <div class="mdui-dialog-title" id="input-dialog-title"></div>
+        <div class="mdui-dialog-content mdui-textfield">
+            <input class="mdui-textfield-input" id='input-dialog-input' />
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>取消</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>确认</button>
+        </div>
+    </div>
 
+    <div id='current-page' hidden>1</div>
 
 </div>
 {% endblock %}
@@ -68,7 +80,10 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 
 <script>
-    $(document).ready(searchDept(false));
+    $(document).ready(function () {
+        getSemesters();
+        searchCourse(1);
+    });
 
     function getCookie(name) {
         let cookieValue = null;
@@ -86,26 +101,51 @@
         return cookieValue;
     }
 
-    function searchDept(snack_bar = true, page = 1) {
-        $("#progress-bar").removeAttr("hidden");
-        $('#page').val(page);
+    function getSemesters() {
         $.ajax({
-            url: "{% url 'search_dept_api' %}",
+            url: "{% url 'get_semesters_api' %}",
             type: 'POST',
             cache: false,
-            data: new FormData($("#search-dept-form")[0]),
+            data: new FormData(),
             dataType: "json",
             processData: false,
             contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                for (var i = 0; i < res.data.semesters.length; i++) {
+                    $('#semester-select').append($('<option>', {value:res.data.semesters[i][0], text:res.data.semesters[i][1]}))
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "获取学期失败", position: 'top' });
+            }
+        });
+    }
+
+    function searchCourse(page) {
+        if (!arguments[0]) page = 1;
+
+        $("#progress-bar").removeAttr("hidden");
+        $('#page').val(page);
+        $.ajax({
+            url: "{% url 'teached_class_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#search-course-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
             success: function (res) {
                 $("#progress-bar").prop("hidden", "hidden");
                 var message = "";
-                if (snack_bar) {
-                    mdui.snackbar({ message: res.message, position: 'top' });
-                }
                 if (res.success) {
-                    drawTable(res.data.dept);
+                    drawTable(res.data.classes);
                     drawPList(res.data.plist, res.data.page);
+                } else {
+                    mdui.snackbar({ message: res.message, position: 'top' });
                 }
             },
             error: function (res) {
@@ -117,18 +157,20 @@
 
     function drawTable(list) {
         $("#table-body").empty();
-        $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable")
+        $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable");
         for (var i = 0; i < list.length; i++) {
             var s = "<tr>";
-            var dept_id;
+            var uid;
             for (var j = 0; j < list[i].length; j++) {
                 if (j == 0) {
-                    dept_id = list[i][j];
+                    uid = list[i][j];
+                    continue;
                 }
                 s = s + "<td>" + list[i][j] + "</td>";
             }
             s = s + "<td>";
-            s = s + "<a class='mdui-btn mdui-color-theme-accent' href='" + dept_id + "' target='_blank'>编辑</button>";
+            s = s + "</td>";
+            s = s + "<td><a href='class_student/" + uid + "' class='mdui-btn mdui-color-theme-accent' target='_blank'>管理</a></td>";
             s = s + "</tr>";
             $("#table-body").append(s);
         }
@@ -146,7 +188,7 @@
             }
 
             if (list[i] != '...') {
-                s = s + "' onclick='searchUser(false, page=" + list[i] + ");"
+                s = s + "' onclick='searchCourse(false, page=" + list[i] + ");"
             }
             s = s + "'>" + list[i] + "</div>";
             $("#page-selector").append(s);

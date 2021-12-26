@@ -1,0 +1,227 @@
+{% extends "course/nav.html" %}
+{% block title %}选课系统-我的课程{% endblock %}
+{% block nav-title %}欢迎使用选课系统{% endblock %}
+
+{% block content %}
+<div class="main-container mdui-container">
+    <div id="search-course">
+        <div class="mdui-row">
+            <div class="main-header mdui-typo">
+                <div class="mdui-col-xs-12">
+                    <h1 id="add">我的课程</h1>
+                </div>
+            </div>
+        </div>
+        <form id="search-course-form">
+            <div class="mdui-row">
+                <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
+                <select class="mdui-select mdui-col-md-2 mdui-col-sm-4" id="semester-select" name="searchSemester" style="margin-top: 16px;">
+                    <option value="current" selected>当前学期</option>
+                </select>
+                <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
+                    style="margin-top: 16px;" onclick="searchCourse();">检索</div>
+            </div>
+            <input id='page' name='page' value="1" hidden />
+            <input name='itemPerPage' value="25" hidden />
+        </form>
+    </div>
+
+    <div>
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <td>课程编号</td>
+                    <td>课程名称</td>
+                    <td>班级名称</td>
+                    <td>授课教师</td>
+                    <td>上课人数</td>
+                    <td>课程容量</td>
+                    <td>授课时间</td>
+                    <td>成绩</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+
+            </tbody>
+        </table>
+    </div>
+
+    </br>
+
+    <div class="mdui-typo">
+        <p class="mdui-row-md-9" id="page-selector">
+
+        </p>
+        <p id="page-count">
+
+        </p>
+    </div>
+
+    <div class="mdui-dialog" id="input-dialog">
+        <div class="mdui-dialog-title" id="input-dialog-title"></div>
+        <div class="mdui-dialog-content mdui-textfield">
+            <input class="mdui-textfield-input" id='input-dialog-input' />
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>取消</button>
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>确认</button>
+        </div>
+    </div>
+
+    <div id='current-page' hidden>1</div>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        getSemesters();
+        searchCourse(1);
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function getSemesters() {
+        $.ajax({
+            url: "{% url 'get_semesters_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData(),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                for (var i = 0; i < res.data.semesters.length; i++) {
+                    $('#semester-select').append($('<option>', {value:res.data.semesters[i][0], text:res.data.semesters[i][1]}))
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "获取学期失败", position: 'top' });
+            }
+        });
+    }
+
+    function searchCourse(page) {
+        if (!arguments[0]) page = 1;
+
+        $("#progress-bar").removeAttr("hidden");
+        $('#page').val(page);
+        $.ajax({
+            url: "{% url 'selected_class_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($("#search-course-form")[0]),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    drawTable(res.data.classes);
+                    drawPList(res.data.plist, res.data.page);
+                } else {
+                    mdui.snackbar({ message: res.message, position: 'top' });
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "查询失败", position: 'top' });
+            }
+        });
+    };
+
+    function withdraw(class_id) {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        f.append("class_id", class_id);
+        f.append("operation", "withdraw");
+        $.ajax({
+            url: "{% url 'select_class_api' %}",
+            type: 'POST',
+            cache: false,
+            data: f,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                var message = "";
+                if (res.success) {
+                    searchCourse($("#current-page").html());
+                }
+                mdui.snackbar({ message: res.message, position: 'top' });
+                searchCourse();
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "操作失败", position: 'top' });
+            }
+        });
+    }
+
+    function drawTable(list) {
+        $("#table-body").empty();
+        $("table").attr("class", "mdui-table mdui-table-hoverable mdui-table-selectable");
+        for (var i = 0; i < list.length; i++) {
+            var s = "<tr>";
+            var uid;
+            for (var j = 0; j < list[i].length; j++) {
+                if (j == 0) {
+                    uid = list[i][j];
+                    continue;
+                }
+                s = s + "<td>" + list[i][j] + "</td>";
+            }
+            s = s + "<td>";
+            s = s + "</td>";
+            s = s + "<td><a onclick='withdraw(" + uid + ");' class='mdui-btn mdui-color-theme-accent'>退课</a></td>";
+            s = s + "</tr>";
+            $("#table-body").append(s);
+        }
+        mdui.mutation();
+    }
+
+    function drawPList(list, current) {
+        $("#current-page").html(current);
+        $("#page-count").html("第" + current + "页，共" + list[list.length - 1] + "页");
+        $("#page-selector").empty();
+        for (var i = 0; i < list.length; i++) {
+            var s = "<div class='mdui-btn ";
+            if (current == list[i]) {
+                s = s + "mdui-color-theme-accent ";
+            }
+
+            if (list[i] != '...') {
+                s = s + "' onclick='searchCourse(false, page=" + list[i] + ");"
+            }
+            s = s + "'>" + list[i] + "</div>";
+            $("#page-selector").append(s);
+        }
+        mdui.mutation();
+    }
+</script>
+{% endblock %}

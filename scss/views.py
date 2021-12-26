@@ -6,6 +6,11 @@ def home(request):
     return render(request, "home.html")
 
 
+# 关于
+def about(request):
+    return render(request, "about.html")
+
+
 # 显示信息
 def info(request, *args, **kwargs):
     title = request.session.get("title", "")

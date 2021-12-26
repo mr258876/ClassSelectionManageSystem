@@ -14,14 +14,18 @@ pip3 install django==3.2.8
 pip3 install psycopg2==2.9.1
 ```
 
-Setup:
+Database Setup:
 ```txt
 python manage.py makemigrations
 python manage.py makemigrations user
+python manage.py makemigrations mgmt
 python manage.py makemigrations course
 python manage.py migrate
-python manage.py migrate user
-python manage.py migrate course
+```
+
+Create Superuser Account:
+```txt
+python manage.py createsuperuser
 ```
 
 ## TODO

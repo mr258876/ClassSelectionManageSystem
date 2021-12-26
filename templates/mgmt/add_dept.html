@@ -66,15 +66,7 @@
             contentType: false,
             success: function (res) {
                 $("#progress-bar").prop("hidden", "hidden");
-                var message = "";
-                if (res.success) {
-                    message = res.message
-                } else {
-                    for (var key in res.message) {
-                        message = message + key + res.message[key] + "\n";
-                    }
-                }
-                mdui.snackbar({ message: message, position: 'top' });
+                mdui.snackbar({ message: res.message, position: 'top' });
                 if (res.success) {
                     drawTable(res.data);
                 }

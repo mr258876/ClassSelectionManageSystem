@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>动态创建按钮</title>
+    <script src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
+</head>
+
+<body class="mdui-container">
+    <div id="AddScheduleBox" class="mdui-btn mdui-btn-raised">添加上课时间</div>
+    <div id="InputsWrapper">
+        <!-- <div><input type="time" name="class_schedule[]" id="time_1" /><select class="mdui-select" id="weekday_1"><option value="1" selected>周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="6">周日</option></select>
+            <a href="#" rel="external nofollow" rel="external nofollow" rel="external nofollow" class="removeclass">
+                <input type='button' value='删除'>
+            </a>
+        </div> -->
+    </div>
+    <script>
+        $(document).ready(function () {
+            var MaxInputs = 8; //maximum input boxes allowed
+            var InputsWrapper = $("#InputsWrapper"); //Input boxes wrapper ID
+            var AddButton = $("#AddScheduleBox"); //Add button ID
+            var x = InputsWrapper.length; //initlal text box count
+            var FieldCount = 0; //to keep track of text box added
+            $(AddButton).click(function (e) //on add input button click
+            {   
+                alert(($("#InputsWrapper").children().length+1));
+                if (x <= MaxInputs) //max input box allowed
+                {
+                    FieldCount++; //text box added increment
+                    //add input box
+                    $(InputsWrapper).append('<div class="mdui-textfield"><select class="mdui-select" id="weekday_' + FieldCount + '"><option value="1" selected>周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="6">周日</option></select><select class="mdui-select" id="weekday_' + FieldCount + '"><option value="0" selected>每周</option><option value="1">单周</option><option value="2">双周</option></select><div class="mdui-btn removeclass" type="button">删除</div><label class="mdui-textfield-label">开始时间</label><input class="mdui-textfield-input" type="time" name="class_schedule[]" id="start_time_' + FieldCount + '"/><label class="mdui-textfield-label">结束时间</label><input class="mdui-textfield-input" type="time" name="class_schedule[]" id="end_time_' + FieldCount + '"/><label class="mdui-textfield-label">上课地点</label><input class="mdui-textfield-input" type="text" name="class_schedule[]" id="place_' + FieldCount + '"/></div>');
+                    x++; //text box increment
+                }
+                return false;
+            });
+            $("body").on("click", ".removeclass", function (e) { //user click on remove text
+                alert(($("#InputsWrapper").children().length-1));
+                if (x > 1) {
+                    $(this).parent('div').remove(); //remove text box
+                    x--; //decrement textbox
+                }
+                return false;
+            })
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
+</body>
+
+</html>
