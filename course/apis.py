@@ -344,6 +344,11 @@ def assign_student_to_class_api(request):
         return JsonResponse({"success": False, "code": 400, "message": "课程不存在", "data": ""})
     course_class = class_list[0]
 
+    # 教师权限限制
+    if request.user.role=="teacher":
+        if request.user.teacher != class_list[0].teacher:
+            return JsonResponse({"success": False, "code": 400, "message": "权限错误", "data": ""})
+
     if operation == "assign":
         try:
             record = StudentCourseInfo(student=student_list[0], courseClass=course_class, grade=None, grade_type=course_class.grade_type)
@@ -394,6 +399,11 @@ def score_student_api(request):
     class_list = Class.objects.filter(id=cid).only()
     if len(class_list) == 0:
         return JsonResponse({"success": False, "code": 400, "message": "课程不存在", "data": ""})
+    
+    # 教师权限限制
+    if request.user.role=="teacher":
+        if request.user.teacher != class_list[0].teacher:
+            return JsonResponse({"success": False, "code": 400, "message": "权限错误", "data": ""})
 
     record_list = StudentCourseInfo.objects.filter(courseClass=class_list[0]).filter(student=student_list[0])
     if len(record_list) == 0:
