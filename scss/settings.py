@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'user',
     'course',
     'mgmt',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

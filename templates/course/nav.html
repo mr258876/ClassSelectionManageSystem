@@ -77,7 +77,7 @@
         <i class="mdui-icon material-icons">&#xe8b6;</i>
         <label>所有课程</label>
     </a>
-    <a href="{% url 'mgmt' %}" class="mdui-ripple mdui-ripple-white">
+    <a href="{% url 'mgmt' %}" class="mdui-ripple mdui-ripple-white {% if '/ProjectMIS307v2/course/' != request.path %}mdui-bottom-nav-active{% endif %}">
         <i class="mdui-icon material-icons">&#xe869;</i>
         <label>系统管理</label>
     </a>

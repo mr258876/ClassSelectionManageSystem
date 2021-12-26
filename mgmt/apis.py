@@ -195,6 +195,8 @@ def add_dept_api(request):
         dept_user = user_set[0]
 
     try:
+        dept_user.name = d_name
+        dept_user.save()
         dept = Department(dept_no=d_no, dept_name=d_name,
                           dept_user=dept_user)
         dept.save()
@@ -222,12 +224,21 @@ def mod_dept_api(request):
         return JsonResponse({"success": False, "code": 400, "message": "用户id不存在", "data": ""})
     if user_set[0].role != 'dept':
         return JsonResponse({"success": False, "code": 400, "message": "用户权限错误", "data": ""})
+    dept_user = user_set[0]
 
     try:
+        # 新assign的用户改名
+        dept_user.name = d_name
+        dept_user.save()
+
         dept = dept_set[0]
+
+        # 以前的用户名字删掉
+        dept.dept_user.name = None
+
         dept.dept_no = d_no
         dept.dept_name = d_name
-        dept.dept_user = user_set[0]
+        dept.dept_user = dept_user
         dept.save()
     except Exception as e:
         return JsonResponse({"success": False, "code": 400, "message": "创建失败", "data": str(e)})

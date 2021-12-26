@@ -113,11 +113,15 @@
                     <tr>
                         <td>课程编号</td>
                         <td>课程名称</td>
+                        <td>班级名称</td>
                         <td>开课院系</td>
                         <td>学分</td>
                         <td>打分制</td>
                         <td>授课教师</td>
+                        <td>上课人数</td>
+                        <td>课程容量</td>
                         <td>授课时间</td>
+                        <td>操作</td>
                     </tr>
                 </thead>
                 <tbody id="table-body-class">
@@ -220,12 +224,11 @@
             success: function (res) {
                 $("#progress-bar").prop("hidden", "hidden");
                 var message = "";
-                if (snack_bar) {
-                    mdui.snackbar({ message: res.message, position: 'top' });
-                }
                 if (res.success) {
                     drawTable(mode == 0 ? res.data.course : res.data.classes, mode);
                     drawPList(res.data.plist, res.data.page, mode);
+                } else {
+                    mdui.snackbar({ message: res.message, position: 'top' });
                 }
             },
             error: function (res) {
@@ -253,7 +256,10 @@
             s = s + "<td>";
             s = s + "<button class='mdui-btn mdui-color-theme-accent' mdui-menu=\"{target: '#menu" + uid + "'}\">操作</button>";
             s = s + "<ul class='mdui-menu' id='menu" + uid + "'>";
-            s = s + "<li class='mdui-menu-item'><a href='mod_course/" + uid + "' class='mdui-ripple'>修改</a></li>";
+            s = s + "<li class='mdui-menu-item'><a href='mod_" + (mode==0?"course":"class") + "/" + uid + "' class='mdui-ripple'>修改</a></li>";
+            if (mode == 1){
+                s = s + "<li class='mdui-menu-item'><a href='../course/class_student/" + uid + "' class='mdui-ripple' target='_blank'>学生管理</a></li>";
+            }
             s = s + "<li class='mdui-menu-item'><a onclick='delItem(\"" + uid + "\", " + mode + ");' class='mdui-ripple'>删除</a></li>";
             s = s + "</ul></td>";
             s = s + "</tr>";
@@ -284,7 +290,7 @@
     function delClass(id, operation) {
         $("#progress-bar").removeAttr("hidden");
         var f = new FormData();
-        f.append("courseId", id);
+        f.append("course_id", id);
         f.append("operation", operation);
         $.ajax({
             url: "{% url 'del_course_api' %}",

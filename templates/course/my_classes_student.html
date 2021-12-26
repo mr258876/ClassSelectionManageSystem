@@ -1,5 +1,5 @@
 {% extends "course/nav.html" %}
-{% block title %}选课系统-选课{% endblock %}
+{% block title %}选课系统-我的课程{% endblock %}
 {% block nav-title %}欢迎使用选课系统{% endblock %}
 
 {% block content %}
@@ -8,21 +8,16 @@
         <div class="mdui-row">
             <div class="main-header mdui-typo">
                 <div class="mdui-col-xs-12">
-                    <h1 id="add">选课</h1>
+                    <h1 id="add">我的课程</h1>
                 </div>
             </div>
         </div>
         <form id="search-course-form">
             <div class="mdui-row">
                 <i class="mdui-icon material-icons mdui-col-xs-1" style="margin-top: 20px;">&#xe8b6;</i>
-                <select class="mdui-select mdui-col-xs-2" name="searchMode" style="margin-top: 16px;">
-                    <option value="courseName" selected>课程名称</option>
-                    <option value="courseId">课程编号</option>
+                <select class="mdui-select mdui-col-md-2 mdui-col-sm-4" id="semester-select" name="searchSemester" style="margin-top: 16px;">
+                    <option value="current" selected>当前学期</option>
                 </select>
-                <input type="hidden" name="searchSemester" value="{{ semester }}">
-                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-7">
-                    <input class="mdui-textfield-input" type="text" name='keyword' />
-                </div>
                 <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-button-row mdui-col-xs-2"
                     style="margin-top: 16px;" onclick="searchCourse();">检索</div>
             </div>
@@ -38,13 +33,11 @@
                     <td>课程编号</td>
                     <td>课程名称</td>
                     <td>班级名称</td>
-                    <td>开课院系</td>
-                    <td>学分</td>
-                    <td>打分制</td>
                     <td>授课教师</td>
                     <td>上课人数</td>
                     <td>课程容量</td>
                     <td>授课时间</td>
+                    <td>成绩</td>
                     <td>操作</td>
                 </tr>
             </thead>
@@ -86,6 +79,7 @@
 
 <script>
     $(document).ready(function () {
+        getSemesters();
         searchCourse(1);
     });
 
@@ -105,13 +99,36 @@
         return cookieValue;
     }
 
+    function getSemesters() {
+        $.ajax({
+            url: "{% url 'get_semesters_api' %}",
+            type: 'POST',
+            cache: false,
+            data: new FormData(),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            success: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                for (var i = 0; i < res.data.semesters.length; i++) {
+                    $('#semester-select').append($('<option>', {value:res.data.semesters[i][0], text:res.data.semesters[i][1]}))
+                }
+            },
+            error: function (res) {
+                $("#progress-bar").prop("hidden", "hidden");
+                mdui.snackbar({ message: "获取学期失败", position: 'top' });
+            }
+        });
+    }
+
     function searchCourse(page) {
         if (!arguments[0]) page = 1;
 
         $("#progress-bar").removeAttr("hidden");
         $('#page').val(page);
         $.ajax({
-            url: "{% url 'search_class_api' %}",
+            url: "{% url 'selected_class_api' %}",
             type: 'POST',
             cache: false,
             data: new FormData($("#search-course-form")[0]),
@@ -136,11 +153,11 @@
         });
     };
 
-    function elect(class_id) {
+    function withdraw(class_id) {
         $("#progress-bar").removeAttr("hidden");
         var f = new FormData();
         f.append("class_id", class_id);
-        f.append("operation", "elect");
+        f.append("operation", "withdraw");
         $.ajax({
             url: "{% url 'select_class_api' %}",
             type: 'POST',
@@ -157,10 +174,11 @@
                     searchCourse($("#current-page").html());
                 }
                 mdui.snackbar({ message: res.message, position: 'top' });
+                searchCourse();
             },
             error: function (res) {
                 $("#progress-bar").prop("hidden", "hidden");
-                mdui.snackbar({ message: "查询失败", position: 'top' });
+                mdui.snackbar({ message: "操作失败", position: 'top' });
             }
         });
     }
@@ -180,7 +198,7 @@
             }
             s = s + "<td>";
             s = s + "</td>";
-            s = s + "<td><a onclick='elect(" + uid + ");' class='mdui-btn mdui-color-theme-accent'>选课</a></td>";
+            s = s + "<td><a onclick='withdraw(" + uid + ");' class='mdui-btn mdui-color-theme-accent'>退课</a></td>";
             s = s + "</tr>";
             $("#table-body").append(s);
         }

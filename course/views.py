@@ -11,6 +11,10 @@ from mgmt.util import get_now_elect_semester
 #######################################
 # 权限测试器
 
+# 用户具有教师及以上权限
+def user_teacher_and_above(user):
+    return user.role == 'teacher' or (user.role == 'dept' and hasattr(user, 'department')) or user.is_superuser
+
 # 用户具有管理权限
 def user_classable(user):
     return user.role == 'student' or user.role == 'teacher'
@@ -45,4 +49,13 @@ def elect(request):
 @login_required
 @user_passes_test(user_classable)
 def my_classes(request):
-    return render(request, "course/course_home.html")
+    if request.user.role == "student":
+        return render(request, "course/my_classes_student.html")
+    else:
+        return render(request, "course/my_classes_teacher.html")
+
+# 课程学生管理
+@login_required
+@user_passes_test(user_teacher_and_above)
+def class_student(request, class_id):
+    return render(request, "course/class_student.html", {'class_id': class_id})

@@ -17,47 +17,44 @@
         <form id="add-course-form">
             {% csrf_token %}
             <div class="mdui-row">
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe865;</i>
                     <label class="mdui-textfield-label">课程id</label>
-                    <input class="mdui-textfield-input" type="text" placeholder="{{ course_id }}" disabled/>
-                    <input class="mdui-textfield-input" type="hidden" name='courseId' value="{{ course_id }}"/>
+                    <input class="mdui-textfield-input" type="text" placeholder="{{ course_id }}" disabled />
+                    <input class="mdui-textfield-input" type="hidden" name='courseId' value="{{ course_id }}" />
                     <div class="mdui-textfield-helper">课程id</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe867;</i>
                     <label class="mdui-textfield-label">课程名称</label>
-                    <input class="mdui-textfield-input" type="text" name='course_name' />
+                    <input class="mdui-textfield-input" type="text" name='course_name' id="name" />
                     <div class="mdui-textfield-helper">课程名称</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe866;</i>
                     <label class="mdui-textfield-label">课程简介</label>
-                    <textarea class="mdui-textfield-input" type="text" name='course_description'></textarea>
+                    <textarea class="mdui-textfield-input" type="text" name='course_description'
+                        placeholder="不变"></textarea>
                     <div class="mdui-textfield-helper">课程简介(可选)</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe263;</i>
                     <label class="mdui-textfield-label">学分</label>
-                    <input class="mdui-textfield-input" type="text" name='course_credit'/>
-                    <div class="mdui-textfield-helper">电子邮箱，长度不超过32字符</div>
+                    <input class="mdui-textfield-input" type="text" name='course_credit' id="credit" />
+                    <div class="mdui-textfield-helper">学分</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe80c;</i>
                     <label class="mdui-textfield-label">开课院系</label>
-                    <input class="mdui-textfield-input" type="text" name='course_dept'/>
+                    <input class="mdui-textfield-input" type="text" name='course_dept' placeholder="不变" />
                     <div class="mdui-textfield-helper">开课院系Id</div>
                 </div>
             </div>
 
             <div class="mdui-row">
                 <div class="mdui-col-xs-12">
-                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="modCourse(0);">创建课程
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="modCourse(0);">
+                        创建课程
                     </div>
                 </div>
             </div>
@@ -77,49 +74,37 @@
             {% csrf_token %}
             <div class="mdui-row">
                 <input type="hidden" value="{{ class_id }}" name="classId">
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe865;</i>
                     <label class="mdui-textfield-label">课程id</label>
-                    <input class="mdui-textfield-input" type="text" placeholder="??" disabled/>
-                    <input class="mdui-textfield-input" type="hidden" value="??"/>
+                    <input class="mdui-textfield-input" type="text" placeholder="{{ class_id }}" disabled />
+                    <input class="mdui-textfield-input" type="hidden" name="class_id" value="{{ class_id }}" />
                     <div class="mdui-textfield-helper">课程id</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe867;</i>
                     <label class="mdui-textfield-label">班级名称</label>
-                    <input class="mdui-textfield-input" type="text" name='class_name' />
+                    <input class="mdui-textfield-input" type="text" name='class_name' id="name" />
                     <div class="mdui-textfield-helper">班级名称</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe866;</i>
                     <label class="mdui-textfield-label">授课教师</label>
-                    <textarea class="mdui-textfield-input" type="text" name='class_teacher_uid'></textarea>
+                    <textarea class="mdui-textfield-input" type="text" name='class_teacher_uid' placeholder="不变"></textarea>
                     <div class="mdui-textfield-helper">授课教师uid</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
-                    <i class="mdui-icon material-icons">&#xe263;</i>
-                    <label class="mdui-textfield-label">学期</label>
-                    <input class="mdui-textfield-input" type="text" name='class_semester_id'/>
-                    <div class="mdui-textfield-helper">学期id</div>
-                </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe80c;</i>
                     <label class="mdui-textfield-label">最大人数</label>
-                    <input class="mdui-textfield-input" type="text" name='class_amount'/>
+                    <input class="mdui-textfield-input" type="text" name='class_amount' id="amount"/>
                     <div class="mdui-textfield-helper">最大人数</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12 {% if form.errors.email %} mdui-textfield-invalid {% endif %}">
+                <div class="mdui-textfield mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe8d3;</i>
                     <label class="mdui-textfield-label">计分方式</label>
                     <div class="mdui-textfield-helper">计分方式</div>
-                    <select class="mdui-select mdui-textfield-input" name="class_grade_type">
-                        <option value="13" selected>十三级</option>
+                    <select class="mdui-select mdui-textfield-input" name="class_grade_type" id="grade_type">
+                        <option value="13">十三级</option>
                         <option value="PF">通过/不通过</option>
                         <option value="SC">百分制</option>
                     </select>
@@ -128,7 +113,8 @@
 
             <div class="mdui-row">
                 <div class="mdui-col-xs-12">
-                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="modCourse(1);">创建班级
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="modCourse(1);">
+                        创建班级
                     </div>
                 </div>
             </div>
@@ -142,13 +128,65 @@
 {% block script %}
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $("#progress-bar").removeAttr("hidden");
+        var f = new FormData();
+        f.append("keyword", "{{course_id}}{{class_id}}");
+        f.append("searchMode", "courseIdPrecise");
+        $.ajax({
+            url: {%if course_id %}"{% url 'search_course_api' %}"{% elif class_id %}"{% url 'search_class_api' %}"{% endif %},
+        type: 'POST',
+        cache: false,
+        data: f,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        success: function (res) {
+            $("#progress-bar").prop("hidden", "hidden");
+            if (res.success) {
+                {%if course_id%}
+                $("#name").val((res.data.course[0][1]));
+                $("#credit").val((res.data.course[0][3]));
+                {%elif class_id%}
+                $("#name").val((res.data.classes[0][3]));
+                $("#amount").val((res.data.classes[0][8]));
+                $("#grade_type").val((res.data.classes[0][5]))
+                {%endif%}
+            } else {
+                mdui.snackbar({ message: res.message, position: 'top' });
+            }
+        },
+        error: function (res) {
+            $("#progress-bar").prop("hidden", "hidden");
+            mdui.snackbar({ message: "操作失败", position: 'top' });
+        }
+        })
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     function modCourse(mode) {
         $("#progress-bar").removeAttr("hidden");
         $.ajax({
-            url: mode==0?"{% url 'mod_course_api' %}":"{% url 'mod_class_api' %}",
+            url: mode == 0 ? "{% url 'mod_course_api' %}" : "{% url 'mod_class_api' %}",
             type: 'POST',
             cache: false,
-            data: new FormData($(mode==0?"#add-course-form":"#add-class-form")[0]),
+            data: new FormData($(mode == 0 ? "#add-course-form" : "#add-class-form")[0]),
             dataType: "json",
             processData: false,
             contentType: false,

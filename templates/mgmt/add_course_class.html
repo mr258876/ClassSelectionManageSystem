@@ -28,46 +28,42 @@
         <form id="add-course-form">
             {% csrf_token %}
             <div class="mdui-row">
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe865;</i>
                     <label class="mdui-textfield-label">课程id</label>
                     <input class="mdui-textfield-input" type="text" name='course_id' />
                     <div class="mdui-textfield-helper">课程id</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe867;</i>
                     <label class="mdui-textfield-label">课程名称</label>
                     <input class="mdui-textfield-input" type="text" name='course_name' />
                     <div class="mdui-textfield-helper">课程名称</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe866;</i>
                     <label class="mdui-textfield-label">课程简介</label>
                     <textarea class="mdui-textfield-input" type="text" name='course_description'></textarea>
                     <div class="mdui-textfield-helper">课程简介(可选)</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe263;</i>
                     <label class="mdui-textfield-label">学分</label>
-                    <input class="mdui-textfield-input" type="text" name='course_credit'/>
+                    <input class="mdui-textfield-input" type="text" name='course_credit' />
                     <div class="mdui-textfield-helper">电子邮箱，长度不超过32字符</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe80c;</i>
                     <label class="mdui-textfield-label">开课院系</label>
-                    <input class="mdui-textfield-input" type="text" name='course_dept'/>
+                    <input class="mdui-textfield-input" type="text" name='course_dept' />
                     <div class="mdui-textfield-helper">开课院系Id</div>
                 </div>
             </div>
 
             <div class="mdui-row">
                 <div class="mdui-col-xs-12">
-                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(0);">创建课程
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(0);">
+                        创建课程
                     </div>
                 </div>
             </div>
@@ -85,39 +81,34 @@
         <form id="add-class-form">
             {% csrf_token %}
             <div class="mdui-row">
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe865;</i>
                     <label class="mdui-textfield-label">课程id</label>
                     <input class="mdui-textfield-input" type="text" name='class_course_id' />
                     <div class="mdui-textfield-helper">课程id</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe867;</i>
                     <label class="mdui-textfield-label">班级名称</label>
                     <input class="mdui-textfield-input" type="text" name='class_name' />
                     <div class="mdui-textfield-helper">班级名称</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe866;</i>
                     <label class="mdui-textfield-label">授课教师</label>
                     <textarea class="mdui-textfield-input" type="text" name='class_teacher_uid'></textarea>
                     <div class="mdui-textfield-helper">授课教师uid</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe263;</i>
                     <label class="mdui-textfield-label">学期</label>
-                    <input class="mdui-textfield-input" type="text" name='class_semester_id'/>
+                    <input class="mdui-textfield-input" type="text" name='class_semester_id' />
                     <div class="mdui-textfield-helper">学期id</div>
                 </div>
-                <div
-                    class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
+                <div class="mdui-textfield mdui-textfield-floating-label mdui-col-xs-12">
                     <i class="mdui-icon material-icons">&#xe80c;</i>
                     <label class="mdui-textfield-label">最大人数</label>
-                    <input class="mdui-textfield-input" type="text" name='class_amount'/>
+                    <input class="mdui-textfield-input" type="text" name='class_amount' />
                     <div class="mdui-textfield-helper">最大人数</div>
                 </div>
                 <div
@@ -131,11 +122,20 @@
                         <option value="SC">百分制</option>
                     </select>
                 </div>
+                <div id="class-schedule">
+                    课程时间
+                    <div id="AddScheduleBox" class="mdui-btn mdui-btn-raised">添加上课时间</div>
+                    <div id="InputsWrapper">
+                    </div>
+                </div>
             </div>
+
+            <br />
 
             <div class="mdui-row">
                 <div class="mdui-col-xs-12">
-                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(1);">创建班级
+                    <div class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" onclick="addCourse(1);">
+                        创建班级
                     </div>
                 </div>
             </div>
@@ -150,11 +150,25 @@
 <script>
     function addCourse(mode) {
         $("#progress-bar").removeAttr("hidden");
+        var f = new FormData($(mode == 0 ? "#add-course-form" : "#add-class-form")[0]);
+        if (mode == 1){
+            if ($("#InputsWrapper").children().length > 0){
+                var schedule_list = [];
+                for(let i=1; i <= $("#InputsWrapper").children().length; i++){
+                    var dic = {};
+                    dic["start"] = $(("#start_time_" + i)).val();
+                    dic["end"] = $(("#end_time_" + i)).val();
+                    dic["classroom"] = $(("#place_" + i)).val();
+                    dic["weekday"] = $(("#weekday_" + i)).val();
+                    dic["interval"] = $(("#intrval_" + i)).val();
+                }
+            }
+        }
         $.ajax({
-            url: mode==0?"{% url 'add_course_api' %}":"{% url 'add_class_api' %}",
+            url: mode == 0 ? "{% url 'add_course_api' %}" : "{% url 'add_class_api' %}",
             type: 'POST',
             cache: false,
-            data: new FormData($(mode==0?"#add-course-form":"#add-class-form")[0]),
+            data: f,
             dataType: "json",
             processData: false,
             contentType: false,
@@ -168,5 +182,33 @@
             }
         });
     };
+</script>
+
+<script>
+    $(document).ready(function () {
+        var MaxInputs = 4; //maximum input boxes allowed
+        var InputsWrapper = $("#InputsWrapper"); //Input boxes wrapper ID
+        var AddButton = $("#AddScheduleBox"); //Add button ID
+        var x = InputsWrapper.length; //initlal text box count
+        var FieldCount = 0; //to keep track of text box added
+        $(AddButton).click(function (e) //on add input button click
+        {
+            if (x <= MaxInputs) //max input box allowed
+            {
+                FieldCount++; //text box added increment
+                //add input box
+                $(InputsWrapper).append('<div class="mdui-textfield"><select class="mdui-select" id="weekday_' + FieldCount + '"><option value="1" selected>周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="6">周日</option></select><select class="mdui-select" id="interval_' + FieldCount + '"><option value="0" selected>每周</option><option value="1">单周</option><option value="2">双周</option></select><div class="mdui-btn removeclass" type="button">删除</div><label class="mdui-textfield-label">开始时间</label><input class="mdui-textfield-input" type="time" name="class_schedule[]" id="start_time_' + FieldCount + '"/><label class="mdui-textfield-label">结束时间</label><input class="mdui-textfield-input" type="time" name="class_schedule[]" id="end_time_' + FieldCount + '"/><label class="mdui-textfield-label">上课地点</label><input class="mdui-textfield-input" type="text" name="class_schedule[]" id="place_' + FieldCount + '"/></div>');
+                x++; //text box increment
+            }
+            return false;
+        });
+        $("body").on("click", ".removeclass", function (e) { //user click on remove text
+            if (x > 1) {
+                $(this).parent('div').remove(); //remove text box
+                x--; //decrement textbox
+            }
+            return false;
+        })
+    });
 </script>
 {% endblock %}
