@@ -5,7 +5,7 @@ from django.shortcuts import render, reverse, redirect
 from django.views.generic import CreateView, UpdateView
 from django.views.decorators.http import require_http_methods
 
-from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm, TeaUpdateForm, StuUpdateForm
+from .forms import UserLoginForm, UserRegisterForm, UserPswdUpdateForm, UserEmailUpdateForm, TeaUpdateForm, StuUpdateForm
 from .models import User, Student, Teacher
 
 from django.contrib.auth.views import LoginView, LogoutView
@@ -79,20 +79,42 @@ class UserCreationView(CreateView):
 
 # 处理密码邮箱更新请求
 @login_required
-def update_security(request):
-    func = UpdateUserView.as_view()
+def update_password(request):
+    func = UpdateUserPswdView.as_view()
 
     if func:
         return func(request, pk=request.user.uid)
 
 # 用户密码更新视图
-class UpdateUserView(UpdateView):
+class UpdateUserPswdView(UpdateView):
     model = User
-    form_class = UserUpdateForm
-    template_name = "user/update_security.html"
+    form_class = UserPswdUpdateForm
+    template_name = "user/update_password.html"
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateUserView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context.update(kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse("course")
+
+
+@login_required
+def update_email(request):
+    func = UpdateUserEmailView.as_view()
+
+    if func:
+        return func(request, pk=request.user.uid)
+
+# 用户邮箱更新视图
+class UpdateUserEmailView(UpdateView):
+    model = User
+    form_class = UserEmailUpdateForm
+    template_name = "user/update_email.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context.update(kwargs)
         return context
 

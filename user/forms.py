@@ -69,8 +69,8 @@ class UserRegisterForm(UserCreationForm):
         return user
 
 
-# 用户信息更新表单
-class UserUpdateForm(forms.ModelForm):
+# 用户密码更新表单
+class UserPswdUpdateForm(forms.ModelForm):
     password = forms.CharField(max_length=16, widget=widgets.PasswordInput(
         attrs={'class': 'mdui-textfield-input', 'pattern': settings.USER_PSWD_PATTERN}))
     confirm_password = forms.CharField(max_length=40, widget=widgets.PasswordInput(
@@ -80,11 +80,9 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = ('password',
                   'confirm_password',
-                  'email',
                   )
         widgets = {'password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
                    'confirm_password': widgets.PasswordInput(attrs={'class': 'mdui-textfield-input'}),
-                   'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
                    }
 
     def clean(self):
@@ -96,6 +94,21 @@ class UserUpdateForm(forms.ModelForm):
             raise ValidationError("Password don't match")
         return cleaned_data
 
+
+# 用户信息更新表单
+class UserEmailUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = (
+                  'email',
+                  )
+        widgets = {
+                   'email': widgets.EmailInput(attrs={'class': 'mdui-textfield-input'})
+                   }
+
+    def clean(self):
+        cleaned_data = super().clean() 
+        return cleaned_data
 
 # 学生个人信息更新
 class StuUpdateForm(forms.ModelForm):
