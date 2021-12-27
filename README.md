@@ -1,7 +1,7 @@
 # ClassSelectionManageSystem
 Class Selection Manage System, 选课管理系统
 
-Still in Progress, 正在开发中
+Abandoned 项目终止
 
 ## Version
 #### Python   version: 3.9.0
